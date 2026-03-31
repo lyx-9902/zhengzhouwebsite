@@ -1,0 +1,956 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>游玩攻略 - 郑州历史风景介绍官网</title>
+    <link rel="stylesheet" href="lib/layui-v2.13.5/css/layui.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: "标源微软雅黑", "正文字体";
+            color: #333;
+            background-color: #f5f5f5;
+        }
+        
+        /* 全局头部 */
+        .header {
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 999;
+            height: 80px;
+        }
+        
+        .header-container {
+            width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            height: 100%;
+        }
+        
+        .logo {
+            width: 80px;
+            height: 80px;
+            background: url('https://picsum.photos/80/80?random=53') no-repeat center;
+            background-size: contain;
+            cursor: pointer;
+        }
+        
+        .nav {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+        }
+        
+        .nav-item {
+            margin: 0 30px;
+            font-size: 16px;
+            color: #333;
+            text-decoration: none;
+            position: relative;
+            padding: 10px 0;
+        }
+        
+        .nav-item:hover {
+            color: #0066cc;
+        }
+        
+        .nav-item:hover::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background-color: #0066cc;
+        }
+        
+        .nav-item.active {
+            font-weight: bold;
+            color: #0066cc;
+        }
+        
+        .nav-item.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background-color: #0066cc;
+        }
+        
+        .search {
+            width: 200px;
+            position: relative;
+        }
+        
+        .search-input {
+            width: 100%;
+            height: 36px;
+            border: 1px solid #ddd;
+            border-radius: 18px;
+            padding: 0 40px 0 20px;
+            font-size: 14px;
+        }
+        
+        .search-btn {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #999;
+        }
+        
+        /* 主内容区 */
+        .main-content {
+            margin-top: 80px;
+            width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+            min-height: calc(100vh - 80px - 120px);
+        }
+        
+        /* 顶部标签 */
+        .top-tabs {
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 20px 0;
+            margin-bottom: 30px;
+        }
+        
+        .tabs-container {
+            width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            gap: 30px;
+        }
+        
+        .tab-item {
+            font-size: 16px;
+            color: #333;
+            cursor: pointer;
+            padding: 10px 0;
+            position: relative;
+        }
+        
+        .tab-item:hover {
+            color: #2196F3;
+        }
+        
+        .tab-item.active {
+            color: #2196F3;
+            font-weight: bold;
+        }
+        
+        .tab-item.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background-color: #2196F3;
+        }
+        
+        /* 内容区 */
+        .content-section {
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 30px;
+            display: none;
+        }
+        
+        .content-section.active {
+            display: block;
+        }
+        
+        /* 标题 */
+        .section-title {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #333;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #2196F3;
+        }
+        
+        /* 出行规划 */
+        .travel-planning {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+        
+        .planning-item {
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            padding: 20px;
+        }
+        
+        .planning-item h3 {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: #333;
+        }
+        
+        .transport-info {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .transport-item {
+            flex: 1;
+            min-width: 250px;
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .transport-item h4 {
+            font-size: 16px;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        
+        .transport-item p {
+            font-size: 14px;
+            line-height: 1.6;
+            color: #666;
+        }
+        
+        .season-recommendation {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .season-item {
+            flex: 1;
+            min-width: 200px;
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .season-item h4 {
+            font-size: 16px;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        
+        .season-item p {
+            font-size: 14px;
+            line-height: 1.6;
+            color: #666;
+        }
+        
+        .duration-planning {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .duration-item {
+            flex: 1;
+            min-width: 300px;
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .duration-item h4 {
+            font-size: 16px;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        
+        .duration-item p {
+            font-size: 14px;
+            line-height: 1.6;
+            color: #666;
+            margin-bottom: 10px;
+        }
+        
+        .duration-item ul {
+            list-style-type: disc;
+            margin-left: 20px;
+            font-size: 14px;
+            line-height: 1.6;
+            color: #666;
+        }
+        
+        /* 住宿与餐饮 */
+        .accommodation-dining {
+            display: flex;
+            gap: 30px;
+        }
+        
+        .accommodation {
+            flex: 1;
+        }
+        
+        .dining {
+            flex: 1;
+        }
+        
+        .accommodation-item {
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .accommodation-item h3 {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: #333;
+        }
+        
+        .hotel-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .hotel-item {
+            flex: 1;
+            min-width: 200px;
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .hotel-item h4 {
+            font-size: 16px;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        
+        .hotel-item p {
+            font-size: 14px;
+            line-height: 1.6;
+            color: #666;
+            margin-bottom: 5px;
+        }
+        
+        .dining-item {
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .dining-item h3 {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: #333;
+        }
+        
+        .restaurant-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .restaurant-item {
+            flex: 1;
+            min-width: 200px;
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .restaurant-item h4 {
+            font-size: 16px;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        
+        .restaurant-item p {
+            font-size: 14px;
+            line-height: 1.6;
+            color: #666;
+            margin-bottom: 5px;
+        }
+        
+        /* 打卡路线制定 */
+        .route-planning {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .route-item {
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            padding: 20px;
+        }
+        
+        .route-item h3 {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: #333;
+        }
+        
+        .route-cards {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .route-card {
+            flex: 1;
+            min-width: 300px;
+            background-color: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .route-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .route-card img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+        }
+        
+        .route-card-info {
+            padding: 15px;
+        }
+        
+        .route-card-info h4 {
+            font-size: 16px;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        
+        .route-card-info p {
+            font-size: 14px;
+            line-height: 1.6;
+            color: #666;
+            margin-bottom: 10px;
+        }
+        
+        .route-card-info ul {
+            list-style-type: disc;
+            margin-left: 20px;
+            font-size: 14px;
+            line-height: 1.6;
+            color: #666;
+            margin-bottom: 10px;
+        }
+        
+        .route-card-info .tips {
+            font-size: 12px;
+            color: #999;
+            margin-top: 10px;
+        }
+        
+        /* 底部信息 */
+        .footer {
+            background-color: #333;
+            color: #fff;
+            padding: 30px 0;
+            margin-top: 60px;
+        }
+        
+        .footer-container {
+            width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .footer-section {
+            flex: 1;
+        }
+        
+        .footer-section h4 {
+            font-size: 16px;
+            margin-bottom: 20px;
+            color: #fff;
+        }
+        
+        .footer-section p {
+            font-size: 14px;
+            line-height: 1.6;
+            color: #ccc;
+        }
+        
+        .footer-section a {
+            color: #ccc;
+            text-decoration: none;
+            display: block;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+        
+        .footer-section a:hover {
+            color: #fff;
+        }
+        
+        .footer-bottom {
+            text-align: center;
+            padding-top: 20px;
+            margin-top: 20px;
+            border-top: 1px solid #444;
+            font-size: 14px;
+            color: #999;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 1200px) {
+            .header-container,
+            .main-content,
+            .tabs-container,
+            .footer-container {
+                width: 95%;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .header {
+                height: 60px;
+            }
+            
+            .logo {
+                width: 60px;
+                height: 60px;
+            }
+            
+            .nav-item {
+                margin: 0 15px;
+                font-size: 14px;
+            }
+            
+            .search {
+                width: 150px;
+            }
+            
+            .tabs-container {
+                flex-wrap: wrap;
+                gap: 20px;
+            }
+            
+            .tab-item {
+                font-size: 14px;
+            }
+            
+            .accommodation-dining {
+                flex-direction: column;
+            }
+            
+            .transport-item,
+            .season-item,
+            .duration-item,
+            .hotel-item,
+            .restaurant-item,
+            .route-card {
+                min-width: 100%;
+            }
+            
+            .footer-container {
+                flex-direction: column;
+                gap: 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 全局头部 -->
+    <header class="header">
+        <div class="header-container">
+            <div class="logo" onclick="window.location.href='index.html'"></div>
+            <nav class="nav">
+                <a href="index.html" class="nav-item">首页</a>
+                <a href="history.html" class="nav-item">历史溯源</a>
+                <a href="scenery.html" class="nav-item">风景打卡</a>
+                <a href="strategy.html" class="nav-item active">游玩攻略</a>
+                <a href="interaction.html" class="nav-item">互动体验</a>
+                <a href="about.html" class="nav-item">关于我们</a>
+            </nav>
+            <div class="search">
+                <input type="text" class="search-input" placeholder="搜索历史景点、风景区域">
+                <button class="search-btn">🔍</button>
+            </div>
+        </div>
+    </header>
+    
+    <!-- 主内容区 -->
+    <div class="main-content">
+        <!-- 顶部标签 -->
+        <div class="top-tabs">
+            <div class="tabs-container">
+                <div class="tab-item active" data-target="travel">出行规划</div>
+                <div class="tab-item" data-target="accommodation">住宿与餐饮</div>
+                <div class="tab-item" data-target="route">打卡路线制定</div>
+            </div>
+        </div>
+        
+        <!-- 内容区 -->
+        <!-- 出行规划 -->
+        <div class="content-section active" id="travel">
+            <h2 class="section-title">出行规划</h2>
+            <div class="travel-planning">
+                <!-- 交通指南 -->
+                <div class="planning-item">
+                    <h3>交通指南</h3>
+                    <div class="transport-info">
+                        <div class="transport-item">
+                            <h4>交通枢纽</h4>
+                            <p><strong>高铁：</strong>郑州东站是主要高铁站，有多条高铁线路经过，连接全国主要城市。</p>
+                            <p><strong>机场：</strong>郑州新郑国际机场，有国内国际航班，距离市区约30公里。</p>
+                            <p><strong>地铁：</strong>郑州地铁网络发达，覆盖市区主要景点，出行方便。</p>
+                        </div>
+                        <div class="transport-item">
+                            <h4>景点交通</h4>
+                            <p><strong>公共交通：</strong>市区景点可乘坐地铁和公交车，票价便宜。</p>
+                            <p><strong>自驾：</strong>市区道路畅通，景点周边有停车场。</p>
+                            <p><strong>出租车：</strong>起步价8元，方便快捷。</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 出行季节推荐 -->
+                <div class="planning-item">
+                    <h3>出行季节推荐</h3>
+                    <div class="season-recommendation">
+                        <div class="season-item">
+                            <h4>春季（3-5月）</h4>
+                            <p>推荐景点：嵩山、黄河湿地公园</p>
+                            <p>特色：春暖花开，适合登山、赏花</p>
+                        </div>
+                        <div class="season-item">
+                            <h4>夏季（6-8月）</h4>
+                            <p>推荐景点：黄河湿地公园、深山古寺</p>
+                            <p>特色：避暑胜地，适合户外探险</p>
+                        </div>
+                        <div class="season-item">
+                            <h4>秋季（9-11月）</h4>
+                            <p>推荐景点：嵩山、黄河日落</p>
+                            <p>特色：秋高气爽，适合摄影、登山</p>
+                        </div>
+                        <div class="season-item">
+                            <h4>冬季（12-2月）</h4>
+                            <p>推荐景点：少林寺、中岳庙</p>
+                            <p>特色：雪景优美，适合文化体验</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 游玩时长规划 -->
+                <div class="planning-item">
+                    <h3>游玩时长规划</h3>
+                    <div class="duration-planning">
+                        <div class="duration-item">
+                            <h4>1日游</h4>
+                            <p>适合时间紧张的游客，推荐路线：</p>
+                            <ul>
+                                <li>上午：少林寺</li>
+                                <li>中午：品尝当地美食</li>
+                                <li>下午：嵩山主峰</li>
+                            </ul>
+                        </div>
+                        <div class="duration-item">
+                            <h4>2-3日游</h4>
+                            <p>适合深度体验，推荐路线：</p>
+                            <ul>
+                                <li>第一天：少林寺、嵩山</li>
+                                <li>第二天：黄河湿地公园、郑州商城遗址</li>
+                                <li>第三天：CBD现代景观、城市公园</li>
+                            </ul>
+                        </div>
+                        <div class="duration-item">
+                            <h4>5日深度游</h4>
+                            <p>适合全面体验，推荐路线：</p>
+                            <ul>
+                                <li>第一天：少林寺、嵩山</li>
+                                <li>第二天：中岳庙、观星台</li>
+                                <li>第三天：黄河湿地公园、黄河风光</li>
+                                <li>第四天：郑州商城遗址、历史文化街区</li>
+                                <li>第五天：CBD现代景观、城市公园</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 住宿与餐饮 -->
+        <div class="content-section" id="accommodation">
+            <h2 class="section-title">住宿与餐饮</h2>
+            <div class="accommodation-dining">
+                <!-- 住宿推荐 -->
+                <div class="accommodation">
+                    <h3 style="font-size: 18px; margin-bottom: 20px; color: #333;">住宿推荐</h3>
+                    <div class="accommodation-item">
+                        <h3>历史文化主题酒店</h3>
+                        <div class="hotel-list">
+                            <div class="hotel-item">
+                                <h4>郑州瑞吉酒店</h4>
+                                <p>位置：CBD核心区</p>
+                                <p>核心特色：豪华五星级酒店，融合历史文化元素</p>
+                                <p>参考价格：¥800-1500/晚</p>
+                            </div>
+                            <div class="hotel-item">
+                                <h4>郑州建业艾美酒店</h4>
+                                <p>位置：郑东新区</p>
+                                <p>核心特色：现代设计与历史文化相结合</p>
+                                <p>参考价格：¥600-1200/晚</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accommodation-item">
+                        <h3>城市便捷酒店</h3>
+                        <div class="hotel-list">
+                            <div class="hotel-item">
+                                <h4>汉庭酒店</h4>
+                                <p>位置：市中心</p>
+                                <p>核心特色：经济实惠，交通便利</p>
+                                <p>参考价格：¥200-400/晚</p>
+                            </div>
+                            <div class="hotel-item">
+                                <h4>如家快捷酒店</h4>
+                                <p>位置：市区各区域</p>
+                                <p>核心特色：性价比高，服务周到</p>
+                                <p>参考价格：¥180-350/晚</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accommodation-item">
+                        <h3>景区周边民宿</h3>
+                        <div class="hotel-list">
+                            <div class="hotel-item">
+                                <h4>嵩山民宿</h4>
+                                <p>位置：嵩山脚下</p>
+                                <p>核心特色：原生态环境，亲近自然</p>
+                                <p>参考价格：¥300-600/晚</p>
+                            </div>
+                            <div class="hotel-item">
+                                <h4>黄河边民宿</h4>
+                                <p>位置：黄河湿地公园附近</p>
+                                <p>核心特色：河景房，环境优美</p>
+                                <p>参考价格：¥250-500/晚</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 餐饮推荐 -->
+                <div class="dining">
+                    <h3 style="font-size: 18px; margin-bottom: 20px; color: #333;">餐饮推荐</h3>
+                    <div class="dining-item">
+                        <h3>郑州特色美食</h3>
+                        <div class="restaurant-list">
+                            <div class="restaurant-item">
+                                <h4>烩面</h4>
+                                <p>推荐餐厅：合记烩面、萧记烩面</p>
+                                <p>特色：郑州传统面食，汤鲜味美</p>
+                            </div>
+                            <div class="restaurant-item">
+                                <h4>胡辣汤</h4>
+                                <p>推荐餐厅：方中山胡辣汤</p>
+                                <p>特色：郑州早餐必备，香辣可口</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="dining-item">
+                        <h3>地方风味</h3>
+                        <div class="restaurant-list">
+                            <div class="restaurant-item">
+                                <h4>豫菜</h4>
+                                <p>推荐餐厅：阿五黄河大鲤鱼</p>
+                                <p>特色：河南传统菜系，口味醇厚</p>
+                            </div>
+                            <div class="restaurant-item">
+                                <h4>夜市小吃</h4>
+                                <p>推荐地点：二七广场夜市</p>
+                                <p>特色：品种丰富，价格实惠</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="dining-item">
+                        <h3>景区周边餐饮</h3>
+                        <div class="restaurant-list">
+                            <div class="restaurant-item">
+                                <h4>嵩山脚下农家菜</h4>
+                                <p>特色：新鲜食材，农家风味</p>
+                            </div>
+                            <div class="restaurant-item">
+                                <h4>黄河边渔家乐</h4>
+                                <p>特色：黄河鲤鱼，新鲜美味</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 打卡路线制定 -->
+        <div class="content-section" id="route">
+            <h2 class="section-title">打卡路线制定</h2>
+            <div class="route-planning">
+                <!-- 推荐路线 -->
+                <div class="route-item">
+                    <h3>推荐路线</h3>
+                    <div class="route-cards">
+                        <div class="route-card">
+                            <img src="https://picsum.photos/300/150?random=54" alt="少林嵩山一日游">
+                            <div class="route-card-info">
+                                <h4>少林嵩山一日游</h4>
+                                <p>适合人群：喜欢文化和自然景观的游客</p>
+                                <ul>
+                                    <li>上午：少林寺参观</li>
+                                    <li>中午：品尝素斋</li>
+                                    <li>下午：登嵩山主峰</li>
+                                    <li>傍晚：欣赏日落</li>
+                                </ul>
+                                <div class="tips">贴士：建议穿舒适的运动鞋，携带足够的水</div>
+                            </div>
+                        </div>
+                        <div class="route-card">
+                            <img src="https://picsum.photos/300/150?random=55" alt="黄河文化一日游">
+                            <div class="route-card-info">
+                                <h4>黄河文化一日游</h4>
+                                <p>适合人群：喜欢自然和文化的游客</p>
+                                <ul>
+                                    <li>上午：黄河湿地公园</li>
+                                    <li>中午：黄河边渔家宴</li>
+                                    <li>下午：黄河风光带</li>
+                                    <li>傍晚：观看黄河日落</li>
+                                </ul>
+                                <div class="tips">贴士：最佳观赏时间是傍晚，建议提前到达</div>
+                            </div>
+                        </div>
+                        <div class="route-card">
+                            <img src="https://picsum.photos/300/150?random=56" alt="古今郑州一日游">
+                            <div class="route-card-info">
+                                <h4>古今郑州一日游</h4>
+                                <p>适合人群：想全面了解郑州的游客</p>
+                                <ul>
+                                    <li>上午：郑州商城遗址</li>
+                                    <li>中午：品尝郑州特色美食</li>
+                                    <li>下午：CBD现代景观</li>
+                                    <li>傍晚：如意湖公园</li>
+                                </ul>
+                                <div class="tips">贴士：建议使用地铁出行，方便快捷</div>
+                            </div>
+                        </div>
+                        <div class="route-card">
+                            <img src="https://picsum.photos/300/150?random=57" alt="亲子游路线">
+                            <div class="route-card-info">
+                                <h4>亲子游路线</h4>
+                                <p>适合人群：带孩子的家庭</p>
+                                <ul>
+                                    <li>上午：郑州植物园</li>
+                                    <li>中午：主题餐厅</li>
+                                    <li>下午：科技馆</li>
+                                    <li>傍晚：人民公园</li>
+                                </ul>
+                                <div class="tips">贴士：准备好孩子的零食和水，注意防晒</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 底部信息 -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-section">
+                <h4>联系我们</h4>
+                <p>客服电话：400-123-4567</p>
+                <p>邮箱：info@zhengzhou-tour.com</p>
+                <p>地址：河南省郑州市中原区</p>
+            </div>
+            <div class="footer-section">
+                <h4>快速链接</h4>
+                <a href="index.html">首页</a>
+                <a href="history.html">历史溯源</a>
+                <a href="scenery.html">风景打卡</a>
+                <a href="strategy.html">游玩攻略</a>
+                <a href="interaction.html">互动体验</a>
+                <a href="about.html">关于我们</a>
+            </div>
+            <div class="footer-section">
+                <h4>社交媒体</h4>
+                <a href="#">微信公众号</a>
+                <a href="#">微博</a>
+                <a href="#">抖音</a>
+                <a href="#">小红书</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2026 郑州历史风景官网 版权所有 | 豫ICP备12345678号</p>
+        </div>
+    </footer>
+    
+    <script src="lib/layui-v2.13.5/layui.js"></script>
+    <script src="lib/axios.min.js"></script>
+    <script>
+        layui.use(['form'], function() {
+            // 顶部标签切换
+            document.querySelectorAll('.tab-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    // 移除所有标签的active类
+                    document.querySelectorAll('.tab-item').forEach(tabItem => {
+                        tabItem.classList.remove('active');
+                    });
+                    // 添加当前标签的active类
+                    this.classList.add('active');
+                    
+                    // 隐藏所有内容板块
+                    document.querySelectorAll('.content-section').forEach(section => {
+                        section.classList.remove('active');
+                    });
+                    // 显示目标内容板块
+                    const target = this.getAttribute('data-target');
+                    document.getElementById(target).classList.add('active');
+                });
+            });
+            
+            // 搜索功能
+            document.querySelector('.search-btn').addEventListener('click', function() {
+                var keyword = document.querySelector('.search-input').value.trim();
+                if (keyword) {
+                    // 这里可以添加搜索逻辑
+                    alert('搜索关键词：' + keyword);
+                }
+            });
+            
+            // 回车搜索
+            document.querySelector('.search-input').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    document.querySelector('.search-btn').click();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

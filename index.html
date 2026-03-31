@@ -1,1 +1,551 @@
-<h1>Hello</h1>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>郑州历史风景介绍官网</title>
+    <link rel="stylesheet" href="lib/layui-v2.13.5/css/layui.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: "标源微软雅黑", "正文字体";
+            color: #333;
+            background-color: #f5f5f5;
+        }
+        
+        /* 全局头部 */
+        .header {
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 999;
+            height: 80px;
+        }
+        
+        .header-container {
+            width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            height: 100%;
+        }
+        
+        .logo {
+            width: 80px;
+            height: 80px;
+            background: url('https://picsum.photos/80/80?random=1') no-repeat center;
+            background-size: contain;
+            cursor: pointer;
+        }
+        
+        .nav {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+        }
+        
+        .nav-item {
+            margin: 0 30px;
+            font-size: 16px;
+            color: #333;
+            text-decoration: none;
+            position: relative;
+            padding: 10px 0;
+        }
+        
+        .nav-item:hover {
+            color: #0066cc;
+        }
+        
+        .nav-item:hover::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background-color: #0066cc;
+        }
+        
+        .nav-item.active {
+            font-weight: bold;
+            color: #0066cc;
+        }
+        
+        .nav-item.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background-color: #0066cc;
+        }
+        
+        .search {
+            width: 200px;
+            position: relative;
+        }
+        
+        .search-input {
+            width: 100%;
+            height: 36px;
+            border: 1px solid #ddd;
+            border-radius: 18px;
+            padding: 0 40px 0 20px;
+            font-size: 14px;
+        }
+        
+        .search-btn {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #999;
+        }
+        
+        /* 英雄区 */
+        .hero-section {
+            margin-top: 80px;
+            height: 500px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* 核心板块 */
+        .core-section {
+            width: 1200px;
+            margin: 40px auto;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .core-card {
+            width: 32%;
+            background-color: #fff;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .core-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .core-card h3 {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: #333;
+        }
+        
+        .core-card-content {
+            margin-bottom: 20px;
+        }
+        
+        .core-card-items {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .core-card-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        
+        .core-card-item:hover {
+            background-color: #f0f0f0;
+        }
+        
+        .core-card-item img {
+            width: 50px;
+            height: 50px;
+            border-radius: 5px;
+            margin-right: 15px;
+        }
+        
+        .core-card-item-info {
+            flex: 1;
+        }
+        
+        .core-card-item-title {
+            font-weight: bold;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+        
+        .core-card-item-desc {
+            font-size: 12px;
+            color: #666;
+            line-height: 1.4;
+        }
+        
+        /* 底部信息 */
+        .footer {
+            background-color: #333;
+            color: #fff;
+            padding: 30px 0;
+            margin-top: 60px;
+        }
+        
+        .footer-container {
+            width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .footer-section {
+            flex: 1;
+        }
+        
+        .footer-section h4 {
+            font-size: 16px;
+            margin-bottom: 20px;
+            color: #fff;
+        }
+        
+        .footer-section p {
+            font-size: 14px;
+            line-height: 1.6;
+            color: #ccc;
+        }
+        
+        .footer-section a {
+            color: #ccc;
+            text-decoration: none;
+            display: block;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+        
+        .footer-section a:hover {
+            color: #fff;
+        }
+        
+        .footer-bottom {
+            text-align: center;
+            padding-top: 20px;
+            margin-top: 20px;
+            border-top: 1px solid #444;
+            font-size: 14px;
+            color: #999;
+        }
+        
+        /* 一键入口按钮 */
+        .quick-entry {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 20px;
+        }
+        
+        .quick-entry-btn {
+            width: 120px;
+            height: 40px;
+            border: none;
+            border-radius: 20px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        
+        .quick-entry-btn:hover {
+            transform: scale(1.05);
+        }
+        
+        .btn-history {
+            background-color: #8B4513;
+            color: #fff;
+        }
+        
+        .btn-scenery {
+            background-color: #4CAF50;
+            color: #fff;
+        }
+        
+        .btn-strategy {
+            background-color: #2196F3;
+            color: #fff;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 1200px) {
+            .header-container,
+            .core-section,
+            .footer-container {
+                width: 95%;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .header {
+                height: 60px;
+            }
+            
+            .logo {
+                width: 60px;
+                height: 60px;
+            }
+            
+            .nav-item {
+                margin: 0 15px;
+                font-size: 14px;
+            }
+            
+            .search {
+                width: 150px;
+            }
+            
+            .hero-section {
+                height: 300px;
+            }
+            
+            .core-section {
+                flex-direction: column;
+                gap: 20px;
+            }
+            
+            .core-card {
+                width: 100%;
+            }
+            
+            .footer-container {
+                flex-direction: column;
+                gap: 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 全局头部 -->
+    <header class="header">
+        <div class="header-container">
+            <div class="logo" onclick="window.location.href='index.html'"></div>
+            <nav class="nav">
+                <a href="index.html" class="nav-item active">首页</a>
+                <a href="history.html" class="nav-item">历史溯源</a>
+                <a href="scenery.html" class="nav-item">风景打卡</a>
+                <a href="strategy.html" class="nav-item">游玩攻略</a>
+                <a href="interaction.html" class="nav-item">互动体验</a>
+                <a href="about.html" class="nav-item">关于我们</a>
+            </nav>
+            <div class="search">
+                <input type="text" class="search-input" placeholder="搜索历史景点、风景区域">
+                <button class="search-btn">🔍</button>
+            </div>
+        </div>
+    </header>
+    
+    <!-- 英雄区 -->
+    <section class="hero-section">
+        <div id="carousel" class="layui-carousel" lay-filter="carousel">
+            <div carousel-item>
+                <div style="background: url('https://picsum.photos/1200/500?random=2') no-repeat center; background-size: cover; height: 100%; display: flex; align-items: center; justify-content: center;">
+                    <div style="text-align: center; color: white; text-shadow: 0 2px 4px rgba(0,0,0,0.5);">
+                        <h1 style="font-size: 48px; margin-bottom: 20px;">天地之中，古今共辉</h1>
+                        <p style="font-size: 20px; margin-bottom: 40px;">郑州历史与风景全景指南</p>
+                    </div>
+                </div>
+                <div style="background: url('https://picsum.photos/1200/500?random=3') no-repeat center; background-size: cover; height: 100%; display: flex; align-items: center; justify-content: center;">
+                    <div style="text-align: center; color: white; text-shadow: 0 2px 4px rgba(0,0,0,0.5);">
+                        <h1 style="font-size: 48px; margin-bottom: 20px;">黄河之滨，魅力郑州</h1>
+                        <p style="font-size: 20px; margin-bottom: 40px;">感受母亲河的磅礴气势</p>
+                    </div>
+                </div>
+                <div style="background: url('https://picsum.photos/1200/500?random=4') no-repeat center; background-size: cover; height: 100%; display: flex; align-items: center; justify-content: center;">
+                    <div style="text-align: center; color: white; text-shadow: 0 2px 4px rgba(0,0,0,0.5);">
+                        <h1 style="font-size: 48px; margin-bottom: 20px;">古今交融，活力郑州</h1>
+                        <p style="font-size: 20px; margin-bottom: 40px;">体验现代都市与历史文化的完美结合</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 一键入口按钮 -->
+        <div class="quick-entry">
+            <button class="quick-entry-btn btn-history" onclick="window.location.href='history.html'">历史溯源</button>
+            <button class="quick-entry-btn btn-scenery" onclick="window.location.href='scenery.html'">风景打卡</button>
+            <button class="quick-entry-btn btn-strategy" onclick="window.location.href='strategy.html'">游玩攻略</button>
+        </div>
+    </section>
+    
+    <!-- 核心板块快速导航 -->
+    <section class="core-section">
+        <!-- 历史精华速览 -->
+        <div class="core-card">
+            <h3>历史精华速览</h3>
+            <div class="core-card-content">
+                <div class="core-card-items">
+                    <div class="core-card-item" onclick="window.location.href='history.html'">
+                        <img src="https://picsum.photos/50/50?random=5" alt="商代亳都">
+                        <div class="core-card-item-info">
+                            <div class="core-card-item-title">商代亳都</div>
+                            <div class="core-card-item-desc">郑州商城遗址，中国最早的都城之一</div>
+                        </div>
+                    </div>
+                    <div class="core-card-item" onclick="window.location.href='history.html'">
+                        <img src="https://picsum.photos/50/50?random=6" alt="少林寺">
+                        <div class="core-card-item-info">
+                            <div class="core-card-item-title">少林寺</div>
+                            <div class="core-card-item-desc">中国佛教禅宗祖庭，武术发源地</div>
+                        </div>
+                    </div>
+                    <div class="core-card-item" onclick="window.location.href='history.html'">
+                        <img src="https://picsum.photos/50/50?random=7" alt="观星台">
+                        <div class="core-card-item-info">
+                            <div class="core-card-item-title">观星台</div>
+                            <div class="core-card-item-desc">中国现存最早的天文台之一</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 风景打卡TOP3 -->
+        <div class="core-card">
+            <h3>风景打卡TOP3</h3>
+            <div class="core-card-content">
+                <div class="core-card-items">
+                    <div class="core-card-item" onclick="window.location.href='scenery.html'">
+                        <img src="https://picsum.photos/50/50?random=8" alt="嵩山">
+                        <div class="core-card-item-info">
+                            <div class="core-card-item-title">嵩山</div>
+                            <div class="core-card-item-desc">五岳之一，少林武术的发源地</div>
+                        </div>
+                    </div>
+                    <div class="core-card-item" onclick="window.location.href='scenery.html'">
+                        <img src="https://picsum.photos/50/50?random=9" alt="黄河湿地公园">
+                        <div class="core-card-item-info">
+                            <div class="core-card-item-title">黄河湿地公园</div>
+                            <div class="core-card-item-desc">感受母亲河的自然生态之美</div>
+                        </div>
+                    </div>
+                    <div class="core-card-item" onclick="window.location.href='scenery.html'">
+                        <img src="https://picsum.photos/50/50?random=10" alt="如意湖">
+                        <div class="core-card-item-info">
+                            <div class="core-card-item-title">如意湖</div>
+                            <div class="core-card-item-desc">郑州新区的标志性景观</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 郑州文化知识 -->
+        <div class="core-card">
+            <h3>郑州文化知识</h3>
+            <div class="core-card-content">
+                <div class="core-card-items">
+                    <div class="core-card-item">
+                        <img src="https://picsum.photos/50/50?random=11" alt="汉帝与郑州关联">
+                        <div class="core-card-item-info">
+                            <div class="core-card-item-title">汉帝与郑州关联</div>
+                            <div class="core-card-item-desc">汉武帝刘彻与郑州的历史渊源</div>
+                        </div>
+                    </div>
+                    <div class="core-card-item">
+                        <img src="https://picsum.photos/50/50?random=12" alt="羁縻州制度">
+                        <div class="core-card-item-info">
+                            <div class="core-card-item-title">羁縻州制度</div>
+                            <div class="core-card-item-desc">唐代在郑州地区的治理制度</div>
+                        </div>
+                    </div>
+                    <div class="core-card-item">
+                        <img src="https://picsum.photos/50/50?random=13" alt="白居易与郑州">
+                        <div class="core-card-item-info">
+                            <div class="core-card-item-title">白居易与郑州</div>
+                            <div class="core-card-item-desc">大诗人白居易在郑州的足迹</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- 底部信息 -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-section">
+                <h4>联系我们</h4>
+                <p>客服电话：400-123-4567</p>
+                <p>邮箱：info@zhengzhou-tour.com</p>
+                <p>地址：河南省郑州市中原区</p>
+            </div>
+            <div class="footer-section">
+                <h4>快速链接</h4>
+                <a href="index.html">首页</a>
+                <a href="history.html">历史溯源</a>
+                <a href="scenery.html">风景打卡</a>
+                <a href="strategy.html">游玩攻略</a>
+                <a href="interaction.html">互动体验</a>
+                <a href="about.html">关于我们</a>
+            </div>
+            <div class="footer-section">
+                <h4>社交媒体</h4>
+                <a href="#">微信公众号</a>
+                <a href="#">微博</a>
+                <a href="#">抖音</a>
+                <a href="#">小红书</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2026 郑州历史风景官网 版权所有 | 豫ICP备12345678号</p>
+        </div>
+    </footer>
+    
+    <script src="lib/layui-v2.13.5/layui.js"></script>
+    <script src="lib/axios.min.js"></script>
+    <script>
+        layui.use(['carousel', 'form'], function() {
+            var carousel = layui.carousel;
+            
+            // 初始化轮播
+            carousel.render({
+                elem: '#carousel',
+                width: '100%',
+                height: '500px',
+                interval: 5000,
+                autoplay: true,
+                indicator: 'inside',
+                arrow: 'always'
+            });
+            
+            // 搜索功能
+            document.querySelector('.search-btn').addEventListener('click', function() {
+                var keyword = document.querySelector('.search-input').value.trim();
+                if (keyword) {
+                    // 这里可以添加搜索逻辑
+                    alert('搜索关键词：' + keyword);
+                }
+            });
+            
+            // 回车搜索
+            document.querySelector('.search-input').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    document.querySelector('.search-btn').click();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

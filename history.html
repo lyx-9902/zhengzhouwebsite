@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>历史溯源 - 郑州历史风景介绍官网</title>
+    <link rel="stylesheet" href="lib/layui-v2.13.5/css/layui.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: "标源微软雅黑", "正文字体";
+            color: #333;
+            background-color: #f5f5f5;
+        }
+        
+        /* 全局头部 */
+        .header {
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 999;
+            height: 80px;
+        }
+        
+        .header-container {
+            width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            height: 100%;
+        }
+        
+        .logo {
+            width: 80px;
+            height: 80px;
+            background: url('https://picsum.photos/80/80?random=14') no-repeat center;
+            background-size: contain;
+            cursor: pointer;
+        }
+        
+        .nav {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+        }
+        
+        .nav-item {
+            margin: 0 30px;
+            font-size: 16px;
+            color: #333;
+            text-decoration: none;
+            position: relative;
+            padding: 10px 0;
+        }
+        
+        .nav-item:hover {
+            color: #0066cc;
+        }
+        
+        .nav-item:hover::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background-color: #0066cc;
+        }
+        
+        .nav-item.active {
+            font-weight: bold;
+            color: #0066cc;
+        }
+        
+        .nav-item.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background-color: #0066cc;
+        }
+        
+        .search {
+            width: 200px;
+            position: relative;
+        }
+        
+        .search-input {
+            width: 100%;
+            height: 36px;
+            border: 1px solid #ddd;
+            border-radius: 18px;
+            padding: 0 40px 0 20px;
+            font-size: 14px;
+        }
+        
+        .search-btn {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #999;
+        }
+        
+        /* 主内容区 */
+        .main-content {
+            margin-top: 80px;
+            width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+            display: flex;
+            min-height: calc(100vh - 80px - 120px);
+        }
+        
+        /* 左侧导航 */
+        .left-nav {
+            width: 200px;
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 20px 0;
+            position: sticky;
+            top: 100px;
+            height: fit-content;
+        }
+        
+        .left-nav-item {
+            padding: 15px 20px;
+            font-size: 16px;
+            color: #333;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .left-nav-item:hover {
+            background-color: #f0f0f0;
+        }
+        
+        .left-nav-item.active {
+            background-color: #0066cc;
+            color: #fff;
+            font-weight: bold;
+        }
+        
+        /* 右侧内容区 */
+        .right-content {
+            flex: 1;
+            margin-left: 30px;
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 30px;
+        }
+        
+        /* 内容板块 */
+        .content-section {
+            display: none;
+        }
+        
+        .content-section.active {
+            display: block;
+        }
+        
+        /* 历史发展时间轴 */
+        .timeline {
+            position: relative;
+            padding: 20px 0;
+        }
+        
+        .timeline-item {
+            display: flex;
+            margin-bottom: 40px;
+            position: relative;
+        }
+        
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: 100px;
+            top: 0;
+            bottom: -40px;
+            width: 2px;
+            background-color: #ddd;
+        }
+        
+        .timeline-item:last-child::before {
+            display: none;
+        }
+        
+        .timeline-period {
+            width: 200px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #0066cc;
+            padding-right: 20px;
+        }
+        
+        .timeline-content {
+            flex: 1;
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+        }
+        
+        .timeline-content h3 {
+            font-size: 16px;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        
+        .timeline-content p {
+            font-size: 14px;
+            line-height: 1.6;
+            color: #666;
+            margin-bottom: 10px;
+        }
+        
+        .timeline-content .achievements {
+            font-size: 14px;
+            color: #333;
+            font-weight: bold;
+        }
+        
+        /* 历史地标深度解析 */
+        .landmark-tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #ddd;
+        }
+        
+        .landmark-tab {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+        }
+        
+        .landmark-tab:hover {
+            color: #0066cc;
+        }
+        
+        .landmark-tab.active {
+            color: #0066cc;
+            border-bottom-color: #0066cc;
+            font-weight: bold;
+        }
+        
+        .landmark-content {
+            display: none;
+        }
+        
+        .landmark-content.active {
+            display: block;
+        }
+        
+        .landmark-items {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .landmark-item {
+            width: calc(33.333% - 14px);
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+        
+        .landmark-item:hover {
+            transform: translateY(-5px);
+        }
+        
+        .landmark-item img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+        }
+        
+        .landmark-item-info {
+            padding: 15px;
+        }
+        
+        .landmark-item-info h4 {
+            font-size: 16px;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        
+        .landmark-item-info p {
+            font-size: 14px;
+            line-height: 1.5;
+            color: #666;
+            margin-bottom: 10px;
+        }
+        
+        .landmark-item-info .period {
+            font-size: 12px;
+            color: #999;
+        }
+        
+        /* 历史文化专题 */
+        .topic-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .topic-item {
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            padding: 20px;
+            transition: transform 0.3s ease;
+        }
+        
+        .topic-item:hover {
+            transform: translateY(-3px);
+        }
+        
+        .topic-item h3 {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: #333;
+        }
+        
+        .topic-item-content {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .topic-item-image {
+            width: 150px;
+            height: 100px;
+            border-radius: 5px;
+            object-fit: cover;
+        }
+        
+        .topic-item-info {
+            flex: 1;
+        }
+        
+        .topic-item-info p {
+            font-size: 14px;
+            line-height: 1.6;
+            color: #666;
+            margin-bottom: 10px;
+        }
+        
+        .topic-item-info .more {
+            color: #0066cc;
+            text-decoration: none;
+            font-size: 14px;
+        }
+        
+        .topic-item-info .more:hover {
+            text-decoration: underline;
+        }
+        
+        /* 底部信息 */
+        .footer {
+            background-color: #333;
+            color: #fff;
+            padding: 30px 0;
+            margin-top: 60px;
+        }
+        
+        .footer-container {
+            width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .footer-section {
+            flex: 1;
+        }
+        
+        .footer-section h4 {
+            font-size: 16px;
+            margin-bottom: 20px;
+            color: #fff;
+        }
+        
+        .footer-section p {
+            font-size: 14px;
+            line-height: 1.6;
+            color: #ccc;
+        }
+        
+        .footer-section a {
+            color: #ccc;
+            text-decoration: none;
+            display: block;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+        
+        .footer-section a:hover {
+            color: #fff;
+        }
+        
+        .footer-bottom {
+            text-align: center;
+            padding-top: 20px;
+            margin-top: 20px;
+            border-top: 1px solid #444;
+            font-size: 14px;
+            color: #999;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 1200px) {
+            .header-container,
+            .main-content,
+            .footer-container {
+                width: 95%;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .header {
+                height: 60px;
+            }
+            
+            .logo {
+                width: 60px;
+                height: 60px;
+            }
+            
+            .nav-item {
+                margin: 0 15px;
+                font-size: 14px;
+            }
+            
+            .search {
+                width: 150px;
+            }
+            
+            .main-content {
+                flex-direction: column;
+            }
+            
+            .left-nav {
+                width: 100%;
+                margin-bottom: 20px;
+                position: static;
+            }
+            
+            .right-content {
+                margin-left: 0;
+            }
+            
+            .timeline-item {
+                flex-direction: column;
+            }
+            
+            .timeline-period {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+            
+            .landmark-item {
+                width: 100%;
+            }
+            
+            .topic-item-content {
+                flex-direction: column;
+            }
+            
+            .topic-item-image {
+                width: 100%;
+                height: 150px;
+            }
+            
+            .footer-container {
+                flex-direction: column;
+                gap: 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 全局头部 -->
+    <header class="header">
+        <div class="header-container">
+            <div class="logo" onclick="window.location.href='index.html'"></div>
+            <nav class="nav">
+                <a href="index.html" class="nav-item">首页</a>
+                <a href="history.html" class="nav-item active">历史溯源</a>
+                <a href="scenery.html" class="nav-item">风景打卡</a>
+                <a href="strategy.html" class="nav-item">游玩攻略</a>
+                <a href="interaction.html" class="nav-item">互动体验</a>
+                <a href="about.html" class="nav-item">关于我们</a>
+            </nav>
+            <div class="search">
+                <input type="text" class="search-input" placeholder="搜索历史景点、风景区域">
+                <button class="search-btn">🔍</button>
+            </div>
+        </div>
+    </header>
+    
+    <!-- 主内容区 -->
+    <div class="main-content">
+        <!-- 左侧导航 -->
+        <div class="left-nav">
+            <div class="left-nav-item active" data-target="timeline">历史发展时间轴</div>
+            <div class="left-nav-item" data-target="landmark">历史地标深度解析</div>
+            <div class="left-nav-item" data-target="topic">历史文化专题</div>
+        </div>
+        
+        <!-- 右侧内容区 -->
+        <div class="right-content">
+            <!-- 历史发展时间轴 -->
+            <div class="content-section active" id="timeline">
+                <h2 style="font-size: 24px; margin-bottom: 30px; color: #333;">历史发展时间轴</h2>
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-period">夏商时期</div>
+                        <div class="timeline-content">
+                            <h3>郑州商城遗址</h3>
+                            <p>郑州商城是中国商代早期的都城遗址，也是中国目前发现的最早的都城遗址之一。商城遗址的发现，为研究中国古代城市的起源和发展提供了重要的实物资料。</p>
+                            <div class="achievements">文化成就：青铜器制作、甲骨文使用、城市规划</div>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-period">西周时期</div>
+                        <div class="timeline-content">
+                            <h3>管国封地</h3>
+                            <p>周武王灭商后，封其弟叔鲜于管，建立管国，管国都城就在今郑州一带。管国是周朝在中原地区的重要封国之一。</p>
+                            <div class="achievements">文化成就：礼乐制度、封建制度、农业发展</div>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-period">春秋战国</div>
+                        <div class="timeline-content">
+                            <h3>郑国都城</h3>
+                            <p>春秋时期，郑国迁都于今郑州一带，建立了新的都城。郑国在春秋时期是一个重要的诸侯国，其都城的规划和建设对后世城市发展产生了影响。</p>
+                            <div class="achievements">文化成就：法家思想、商业发展、城市建设</div>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-period">秦汉时期</div>
+                        <div class="timeline-content">
+                            <h3>荥阳郡</h3>
+                            <p>秦朝统一后，在今郑州一带设置荥阳郡。汉朝时期，郑州地区是中原地区的重要政治、经济中心之一。</p>
+                            <div class="achievements">文化成就：儒家思想、铁器普及、丝绸之路</div>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-period">隋唐时期</div>
+                        <div class="timeline-content">
+                            <h3>郑州刺史府</h3>
+                            <p>隋唐时期，郑州是中原地区的重要州郡之一，经济繁荣，文化发达。唐代诗人白居易曾在郑州任职。</p>
+                            <div class="achievements">文化成就：科举制度、诗歌发展、城市商业</div>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-period">宋元明清</div>
+                        <div class="timeline-content">
+                            <h3>郑州发展</h3>
+                            <p>宋元明清时期，郑州地区继续发展，成为中原地区的重要城市。特别是明清时期，郑州的商业和手工业得到了进一步的发展。</p>
+                            <div class="achievements">文化成就：理学发展、商业繁荣、城市建设</div>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-period">近现代</div>
+                        <div class="timeline-content">
+                            <h3>现代郑州</h3>
+                            <p>近现代以来，郑州逐渐发展成为河南省的政治、经济、文化中心。特别是改革开放以来，郑州的城市建设和经济发展取得了巨大成就。</p>
+                            <div class="achievements">文化成就：现代教育、工业发展、交通枢纽</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 历史地标深度解析 -->
+            <div class="content-section" id="landmark">
+                <h2 style="font-size: 24px; margin-bottom: 30px; color: #333;">历史地标深度解析</h2>
+                <div class="landmark-tabs">
+                    <div class="landmark-tab active" data-target="商都文化">商都文化</div>
+                    <div class="landmark-tab" data-target="少林禅武">少林禅武</div>
+                    <div class="landmark-tab" data-target="黄河文明">黄河文明</div>
+                    <div class="landmark-tab" data-target="古建筑">古建筑</div>
+                </div>
+                
+                <div class="landmark-content active" id="商都文化">
+                    <div class="landmark-items">
+                        <div class="landmark-item">
+                            <img src="https://picsum.photos/300/200?random=15" alt="郑州商城遗址">
+                            <div class="landmark-item-info">
+                                <h4>郑州商城遗址</h4>
+                                <p>中国商代早期都城遗址，距今约3600年，是中国目前发现的最早的都城遗址之一。</p>
+                                <div class="period">商代早期</div>
+                            </div>
+                        </div>
+                        <div class="landmark-item">
+                            <img src="https://picsum.photos/300/200?random=16" alt="商代青铜器">
+                            <div class="landmark-item-info">
+                                <h4>商代青铜器</h4>
+                                <p>郑州商城遗址出土了大量精美的商代青铜器，反映了当时高超的青铜铸造工艺。</p>
+                                <div class="period">商代</div>
+                            </div>
+                        </div>
+                        <div class="landmark-item">
+                            <img src="https://picsum.photos/300/200?random=17" alt="甲骨文">
+                            <div class="landmark-item-info">
+                                <h4>甲骨文</h4>
+                                <p>郑州地区出土的甲骨文，为研究商代的历史和文化提供了重要的资料。</p>
+                                <div class="period">商代</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="landmark-content" id="少林禅武">
+                    <div class="landmark-items">
+                        <div class="landmark-item">
+                            <img src="https://picsum.photos/300/200?random=18" alt="少林寺">
+                            <div class="landmark-item-info">
+                                <h4>少林寺</h4>
+                                <p>中国佛教禅宗祖庭，也是少林武术的发源地，被誉为"天下第一名刹"。</p>
+                                <div class="period">北魏时期</div>
+                            </div>
+                        </div>
+                        <div class="landmark-item">
+                            <img src="https://picsum.photos/300/200?random=19" alt="少林武术">
+                            <div class="landmark-item-info">
+                                <h4>少林武术</h4>
+                                <p>少林武术是中国武术的重要流派之一，以刚劲有力、招式多变著称。</p>
+                                <div class="period">南北朝至今</div>
+                            </div>
+                        </div>
+                        <div class="landmark-item">
+                            <img src="https://picsum.photos/300/200?random=20" alt="塔林">
+                            <div class="landmark-item-info">
+                                <h4>塔林</h4>
+                                <p>少林寺塔林是中国最大的古塔群之一，保存了从唐代到清代的砖石墓塔。</p>
+                                <div class="period">唐代至今</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="landmark-content" id="黄河文明">
+                    <div class="landmark-items">
+                        <div class="landmark-item">
+                            <img src="https://picsum.photos/300/200?random=21" alt="黄河">
+                            <div class="landmark-item-info">
+                                <h4>黄河</h4>
+                                <p>黄河是中华民族的母亲河，在郑州地区形成了壮丽的自然景观和丰富的文化遗产。</p>
+                                <div class="period">远古至今</div>
+                            </div>
+                        </div>
+                        <div class="landmark-item">
+                            <img src="https://picsum.photos/300/200?random=22" alt="黄河湿地公园">
+                            <div class="landmark-item-info">
+                                <h4>黄河湿地公园</h4>
+                                <p>郑州黄河湿地公园是一个集生态保护、旅游观光、科普教育于一体的综合性公园。</p>
+                                <div class="period">现代</div>
+                            </div>
+                        </div>
+                        <div class="landmark-item">
+                            <img src="https://picsum.photos/300/200?random=23" alt="黄河水利工程">
+                            <div class="landmark-item-info">
+                                <h4>黄河水利工程</h4>
+                                <p>郑州地区历史上修建了许多黄河水利工程，为农业生产和城市发展提供了保障。</p>
+                                <div class="period">古代至今</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="landmark-content" id="古建筑">
+                    <div class="landmark-items">
+                        <div class="landmark-item">
+                            <img src="https://picsum.photos/300/200?random=24" alt="观星台">
+                            <div class="landmark-item-info">
+                                <h4>观星台</h4>
+                                <p>中国现存最早的天文台之一，由元代天文学家郭守敬设计建造。</p>
+                                <div class="period">元代</div>
+                            </div>
+                        </div>
+                        <div class="landmark-item">
+                            <img src="https://picsum.photos/300/200?random=25" alt="中岳庙">
+                            <div class="landmark-item-info">
+                                <h4>中岳庙</h4>
+                                <p>道教圣地，是五岳中规模最大、保存最完整的古建筑群之一。</p>
+                                <div class="period">汉代至今</div>
+                            </div>
+                        </div>
+                        <div class="landmark-item">
+                            <img src="https://picsum.photos/300/200?random=26" alt="郑州古城墙">
+                            <div class="landmark-item-info">
+                                <h4>郑州古城墙</h4>
+                                <p>郑州古城墙是中国保存较为完整的古代城墙之一，见证了郑州的历史变迁。</p>
+                                <div class="period">明代</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 历史文化专题 -->
+            <div class="content-section" id="topic">
+                <h2 style="font-size: 24px; margin-bottom: 30px; color: #333;">历史文化专题</h2>
+                <div class="topic-list">
+                    <div class="topic-item">
+                        <h3>汉帝与郑州关联</h3>
+                        <div class="topic-item-content">
+                            <img src="https://picsum.photos/150/100?random=27" alt="汉武帝" class="topic-item-image">
+                            <div class="topic-item-info">
+                                <p>汉武帝刘彻是中国历史上一位杰出的皇帝，他与郑州有着密切的关联。汉武帝时期，郑州地区是中原地区的重要政治、经济中心之一，汉武帝曾多次巡幸郑州一带。</p>
+                                <p>汉武帝时期，郑州地区的农业、手工业和商业得到了很大的发展，同时也促进了文化的繁荣。汉武帝推行的"罢黜百家，独尊儒术"政策，对郑州地区的文化发展产生了深远的影响。</p>
+                                <a href="#" class="more">查看更多 ></a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="topic-item">
+                        <h3>羁縻州制度在郑州地区的实践</h3>
+                        <div class="topic-item-content">
+                            <img src="https://picsum.photos/150/100?random=28" alt="羁縻州制度" class="topic-item-image">
+                            <div class="topic-item-info">
+                                <p>羁縻州制度是唐代在边疆地区实行的一种特殊的行政管理制度，在郑州地区也有一定的实践。这种制度允许当地少数民族首领保留一定的自治权，同时接受中央政府的管辖。</p>
+                                <p>唐代在郑州地区实行羁縻州制度，对于维护国家统一、促进民族融合起到了重要的作用。这种制度也为郑州地区的经济发展和文化交流创造了有利条件。</p>
+                                <a href="#" class="more">查看更多 ></a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="topic-item">
+                        <h3>白居易与郑州</h3>
+                        <div class="topic-item-content">
+                            <img src="https://picsum.photos/150/100?random=29" alt="白居易" class="topic-item-image">
+                            <div class="topic-item-info">
+                                <p>白居易是唐代著名的诗人，他与郑州有着密切的关联。白居易曾在郑州任职，对郑州的自然风光和人文景观留下了许多美好的诗篇。</p>
+                                <p>白居易在郑州期间，写下了许多著名的诗歌，如《郑州刺史东斋》等，这些诗歌不仅反映了郑州的自然风光和人文景观，也表达了白居易对郑州的深厚感情。</p>
+                                <a href="#" class="more">查看更多 ></a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="topic-item">
+                        <h3>郑州古代民俗文化</h3>
+                        <div class="topic-item-content">
+                            <img src="https://picsum.photos/150/100?random=30" alt="古代民俗" class="topic-item-image">
+                            <div class="topic-item-info">
+                                <p>郑州地区有着丰富的古代民俗文化，如豫剧、少林功夫、黄河号子等。这些民俗文化不仅反映了郑州地区的历史和文化，也成为了中华民族文化的重要组成部分。</p>
+                                <p>郑州古代民俗文化的形成与发展，与郑州地区的历史、地理、经济等因素密切相关。这些民俗文化不仅是郑州地区的宝贵财富，也是中华民族文化的重要遗产。</p>
+                                <a href="#" class="more">查看更多 ></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 底部信息 -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-section">
+                <h4>联系我们</h4>
+                <p>客服电话：400-123-4567</p>
+                <p>邮箱：info@zhengzhou-tour.com</p>
+                <p>地址：河南省郑州市中原区</p>
+            </div>
+            <div class="footer-section">
+                <h4>快速链接</h4>
+                <a href="index.html">首页</a>
+                <a href="history.html">历史溯源</a>
+                <a href="scenery.html">风景打卡</a>
+                <a href="strategy.html">游玩攻略</a>
+                <a href="interaction.html">互动体验</a>
+                <a href="about.html">关于我们</a>
+            </div>
+            <div class="footer-section">
+                <h4>社交媒体</h4>
+                <a href="#">微信公众号</a>
+                <a href="#">微博</a>
+                <a href="#">抖音</a>
+                <a href="#">小红书</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2026 郑州历史风景官网 版权所有 | 豫ICP备12345678号</p>
+        </div>
+    </footer>
+    
+    <script src="lib/layui-v2.13.5/layui.js"></script>
+    <script src="lib/axios.min.js"></script>
+    <script>
+        layui.use(['form'], function() {
+            // 左侧导航切换
+            document.querySelectorAll('.left-nav-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    // 移除所有左侧导航项的active类
+                    document.querySelectorAll('.left-nav-item').forEach(navItem => {
+                        navItem.classList.remove('active');
+                    });
+                    // 添加当前项的active类
+                    this.classList.add('active');
+                    
+                    // 隐藏所有内容板块
+                    document.querySelectorAll('.content-section').forEach(section => {
+                        section.classList.remove('active');
+                    });
+                    // 显示目标内容板块
+                    const target = this.getAttribute('data-target');
+                    document.getElementById(target).classList.add('active');
+                });
+            });
+            
+            // 历史地标标签切换
+            document.querySelectorAll('.landmark-tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    // 移除所有标签的active类
+                    document.querySelectorAll('.landmark-tab').forEach(tabItem => {
+                        tabItem.classList.remove('active');
+                    });
+                    // 添加当前标签的active类
+                    this.classList.add('active');
+                    
+                    // 隐藏所有内容
+                    document.querySelectorAll('.landmark-content').forEach(content => {
+                        content.classList.remove('active');
+                    });
+                    // 显示目标内容
+                    const target = this.getAttribute('data-target');
+                    document.getElementById(target).classList.add('active');
+                });
+            });
+            
+            // 搜索功能
+            document.querySelector('.search-btn').addEventListener('click', function() {
+                var keyword = document.querySelector('.search-input').value.trim();
+                if (keyword) {
+                    // 这里可以添加搜索逻辑
+                    alert('搜索关键词：' + keyword);
+                }
+            });
+            
+            // 回车搜索
+            document.querySelector('.search-input').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    document.querySelector('.search-btn').click();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

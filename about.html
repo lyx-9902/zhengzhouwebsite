@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>关于我们 - 郑州历史风景介绍官网</title>
+    <link rel="stylesheet" href="lib/layui-v2.13.5/css/layui.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: "标源微软雅黑", "正文字体";
+            color: #333;
+            background-color: #f5f5f5;
+        }
+        
+        /* 全局头部 */
+        .header {
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 999;
+            height: 80px;
+        }
+        
+        .header-container {
+            width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            height: 100%;
+        }
+        
+        .logo {
+            width: 80px;
+            height: 80px;
+            background: url('https://picsum.photos/80/80?random=63') no-repeat center;
+            background-size: contain;
+            cursor: pointer;
+        }
+        
+        .nav {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+        }
+        
+        .nav-item {
+            margin: 0 30px;
+            font-size: 16px;
+            color: #333;
+            text-decoration: none;
+            position: relative;
+            padding: 10px 0;
+        }
+        
+        .nav-item:hover {
+            color: #0066cc;
+        }
+        
+        .nav-item:hover::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background-color: #0066cc;
+        }
+        
+        .nav-item.active {
+            font-weight: bold;
+            color: #0066cc;
+        }
+        
+        .nav-item.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background-color: #0066cc;
+        }
+        
+        .search {
+            width: 200px;
+            position: relative;
+        }
+        
+        .search-input {
+            width: 100%;
+            height: 36px;
+            border: 1px solid #ddd;
+            border-radius: 18px;
+            padding: 0 40px 0 20px;
+            font-size: 14px;
+        }
+        
+        .search-btn {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #999;
+        }
+        
+        /* 主内容区 */
+        .main-content {
+            margin-top: 80px;
+            width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+            min-height: calc(100vh - 80px - 120px);
+        }
+        
+        /* 内容区 */
+        .content-section {
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 40px;
+            margin-bottom: 60px;
+            border-radius: 8px;
+        }
+        
+        /* 标题 */
+        .section-title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 30px;
+            color: #333;
+            text-align: center;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #0066cc;
+        }
+        
+        /* 网站介绍 */
+        .website-intro {
+            margin-bottom: 40px;
+        }
+        
+        .intro-content {
+            font-size: 16px;
+            line-height: 1.8;
+            color: #666;
+            margin-bottom: 20px;
+            text-align: justify;
+        }
+        
+        .intro-list {
+            list-style-type: disc;
+            margin-left: 20px;
+            font-size: 16px;
+            line-height: 1.8;
+            color: #666;
+        }
+        
+        /* 团队介绍 */
+        .team-intro {
+            margin-bottom: 40px;
+        }
+        
+        .team-categories {
+            display: flex;
+            justify-content: space-between;
+            gap: 30px;
+            margin-top: 30px;
+        }
+        
+        .team-category {
+            flex: 1;
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+        }
+        
+        .team-category h3 {
+            font-size: 18px;
+            margin-bottom: 20px;
+            color: #333;
+            text-align: center;
+        }
+        
+        .team-member {
+            margin-bottom: 20px;
+        }
+        
+        .team-member h4 {
+            font-size: 16px;
+            margin-bottom: 5px;
+            color: #333;
+        }
+        
+        .team-member p {
+            font-size: 14px;
+            line-height: 1.5;
+            color: #666;
+        }
+        
+        /* 联系方式 */
+        .contact-info {
+            margin-bottom: 20px;
+        }
+        
+        .contact-details {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin-top: 30px;
+        }
+        
+        .contact-item {
+            flex: 1;
+            min-width: 300px;
+        }
+        
+        .contact-item h3 {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: #333;
+        }
+        
+        .contact-item p {
+            font-size: 16px;
+            line-height: 1.6;
+            color: #666;
+            margin-bottom: 10px;
+        }
+        
+        .contact-item a {
+            color: #0066cc;
+            text-decoration: none;
+        }
+        
+        .contact-item a:hover {
+            text-decoration: underline;
+        }
+        
+        /* 底部信息 */
+        .footer {
+            background-color: #333;
+            color: #fff;
+            padding: 30px 0;
+            margin-top: 60px;
+        }
+        
+        .footer-container {
+            width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .footer-section {
+            flex: 1;
+        }
+        
+        .footer-section h4 {
+            font-size: 16px;
+            margin-bottom: 20px;
+            color: #fff;
+        }
+        
+        .footer-section p {
+            font-size: 14px;
+            line-height: 1.6;
+            color: #ccc;
+        }
+        
+        .footer-section a {
+            color: #ccc;
+            text-decoration: none;
+            display: block;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+        
+        .footer-section a:hover {
+            color: #fff;
+        }
+        
+        .footer-bottom {
+            text-align: center;
+            padding-top: 20px;
+            margin-top: 20px;
+            border-top: 1px solid #444;
+            font-size: 14px;
+            color: #999;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 1200px) {
+            .header-container,
+            .main-content,
+            .footer-container {
+                width: 95%;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .header {
+                height: 60px;
+            }
+            
+            .logo {
+                width: 60px;
+                height: 60px;
+            }
+            
+            .nav-item {
+                margin: 0 15px;
+                font-size: 14px;
+            }
+            
+            .search {
+                width: 150px;
+            }
+            
+            .content-section {
+                padding: 20px;
+            }
+            
+            .team-categories {
+                flex-direction: column;
+            }
+            
+            .contact-details {
+                flex-direction: column;
+            }
+            
+            .footer-container {
+                flex-direction: column;
+                gap: 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 全局头部 -->
+    <header class="header">
+        <div class="header-container">
+            <div class="logo" onclick="window.location.href='index.html'"></div>
+            <nav class="nav">
+                <a href="index.html" class="nav-item">首页</a>
+                <a href="history.html" class="nav-item">历史溯源</a>
+                <a href="scenery.html" class="nav-item">风景打卡</a>
+                <a href="strategy.html" class="nav-item">游玩攻略</a>
+                <a href="interaction.html" class="nav-item">互动体验</a>
+                <a href="about.html" class="nav-item active">关于我们</a>
+            </nav>
+            <div class="search">
+                <input type="text" class="search-input" placeholder="搜索历史景点、风景区域">
+                <button class="search-btn">🔍</button>
+            </div>
+        </div>
+    </header>
+    
+    <!-- 主内容区 -->
+    <div class="main-content">
+        <div class="content-section">
+            <h2 class="section-title">关于我们</h2>
+            
+            <!-- 网站介绍 -->
+            <div class="website-intro">
+                <h3 style="font-size: 20px; margin-bottom: 20px; color: #333;">网站介绍</h3>
+                <div class="intro-content">
+                    郑州历史风景介绍官网是一个致力于展示郑州历史文化和自然风光的综合性平台。我们的使命是通过丰富的内容和互动功能，让更多人了解郑州的历史底蕴和自然美景，促进郑州文化旅游的发展。
+                </div>
+                <div class="intro-content">
+                    网站成立于2026年，由一群热爱郑州文化的专业团队创建。我们致力于打造一个权威、全面、易用的郑州旅游信息平台，为游客提供详细的历史文化信息、风景景点介绍、游玩攻略和互动交流功能。
+                </div>
+                <div class="intro-content">
+                    我们的核心价值包括：
+                </div>
+                <ul class="intro-list">
+                    <li>提供准确、权威的郑州历史文化和旅游信息</li>
+                    <li>打造用户友好的界面和流畅的用户体验</li>
+                    <li>促进游客与郑州文化的互动和交流</li>
+                    <li>展示郑州的历史底蕴和自然美景</li>
+                    <li>为郑州文化旅游的发展贡献力量</li>
+                </ul>
+                <div class="intro-content">
+                    网站内容更新频率：每月更新1-2次景点/历史内容，确保信息的及时性和准确性。
+                </div>
+                <div class="intro-content">
+                    核心信息来源：河南省文化和旅游厅、郑州博物馆、郑州文旅局等权威渠道，确保信息的真实性和权威性。
+                </div>
+            </div>
+            
+            <!-- 团队介绍 -->
+            <div class="team-intro">
+                <h3 style="font-size: 20px; margin-bottom: 20px; color: #333;">团队介绍</h3>
+                <div class="team-categories">
+                    <div class="team-category">
+                        <h3>技术团队</h3>
+                        <div class="team-member">
+                            <h4>张工程师</h4>
+                            <p>核心职责：网站架构设计和技术开发，负责网站的技术实现和维护。</p>
+                        </div>
+                        <div class="team-member">
+                            <h4>李开发</h4>
+                            <p>核心职责：前端开发和用户界面设计，负责网站的视觉效果和用户体验。</p>
+                        </div>
+                        <div class="team-member">
+                            <h4>王运维</h4>
+                            <p>核心职责：网站运维和安全管理，确保网站的稳定运行和数据安全。</p>
+                        </div>
+                    </div>
+                    <div class="team-category">
+                        <h3>内容团队</h3>
+                        <div class="team-member">
+                            <h4>陈编辑</h4>
+                            <p>核心职责：内容策划和编辑，负责网站内容的规划和管理。</p>
+                        </div>
+                        <div class="team-member">
+                            <h4>刘记者</h4>
+                            <p>核心职责：采访和写作，负责收集和撰写郑州历史文化和旅游信息。</p>
+                        </div>
+                        <div class="team-member">
+                            <h4>赵摄影师</h4>
+                            <p>核心职责：摄影和图像处理，负责网站图片的拍摄和处理。</p>
+                        </div>
+                    </div>
+                    <div class="team-category">
+                        <h3>设计团队</h3>
+                        <div class="team-member">
+                            <h4>孙设计师</h4>
+                            <p>核心职责：网站整体设计和品牌形象，负责网站的视觉风格和品牌建设。</p>
+                        </div>
+                        <div class="team-member">
+                            <h4>周UI</h4>
+                            <p>核心职责：用户界面设计，负责网站的界面布局和交互设计。</p>
+                        </div>
+                        <div class="team-member">
+                            <h4>吴插画师</h4>
+                            <p>核心职责：插画和视觉元素设计，负责网站的插图和视觉元素创作。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 联系方式 -->
+            <div class="contact-info">
+                <h3 style="font-size: 20px; margin-bottom: 20px; color: #333;">联系方式</h3>
+                <div class="contact-details">
+                    <div class="contact-item">
+                        <h3>客服联系方式</h3>
+                        <p>客服邮箱：<a href="mailto:support@zhengzhou-tour.com">support@zhengzhou-tour.com</a></p>
+                        <p>合作洽谈方式：电话 400-123-4567</p>
+                    </div>
+                    <div class="contact-item">
+                        <h3>社交媒体</h3>
+                        <p>微信公众号：郑州历史风景</p>
+                        <p>微博：@郑州历史风景官网</p>
+                        <p>抖音：郑州历史风景</p>
+                        <p>小红书：郑州历史风景</p>
+                    </div>
+                    <div class="contact-item">
+                        <h3>其他联系方式</h3>
+                        <p>地址：河南省郑州市中原区文化大厦</p>
+                        <p>邮编：450000</p>
+                        <p>反馈渠道：<a href="interaction.html">互动体验板块的留言反馈</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 底部信息 -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-section">
+                <h4>联系我们</h4>
+                <p>客服电话：400-123-4567</p>
+                <p>邮箱：info@zhengzhou-tour.com</p>
+                <p>地址：河南省郑州市中原区</p>
+            </div>
+            <div class="footer-section">
+                <h4>快速链接</h4>
+                <a href="index.html">首页</a>
+                <a href="history.html">历史溯源</a>
+                <a href="scenery.html">风景打卡</a>
+                <a href="strategy.html">游玩攻略</a>
+                <a href="interaction.html">互动体验</a>
+                <a href="about.html">关于我们</a>
+            </div>
+            <div class="footer-section">
+                <h4>社交媒体</h4>
+                <a href="#">微信公众号</a>
+                <a href="#">微博</a>
+                <a href="#">抖音</a>
+                <a href="#">小红书</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2026 郑州历史风景官网 版权所有 | 豫ICP备12345678号</p>
+        </div>
+    </footer>
+    
+    <script src="lib/layui-v2.13.5/layui.js"></script>
+    <script src="lib/axios.min.js"></script>
+    <script>
+        layui.use(['form'], function() {
+            // 搜索功能
+            document.querySelector('.search-btn').addEventListener('click', function() {
+                var keyword = document.querySelector('.search-input').value.trim();
+                if (keyword) {
+                    // 这里可以添加搜索逻辑
+                    alert('搜索关键词：' + keyword);
+                }
+            });
+            
+            // 回车搜索
+            document.querySelector('.search-input').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    document.querySelector('.search-btn').click();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

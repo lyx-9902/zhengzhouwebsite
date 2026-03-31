@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>风景打卡 - 郑州历史风景介绍官网</title>
+    <link rel="stylesheet" href="lib/layui-v2.13.5/css/layui.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: "标源微软雅黑", "正文字体";
+            color: #333;
+            background-color: #f5f5f5;
+        }
+        
+        /* 全局头部 */
+        .header {
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 999;
+            height: 80px;
+        }
+        
+        .header-container {
+            width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            height: 100%;
+        }
+        
+        .logo {
+            width: 80px;
+            height: 80px;
+            background: url('https://picsum.photos/80/80?random=31') no-repeat center;
+            background-size: contain;
+            cursor: pointer;
+        }
+        
+        .nav {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+        }
+        
+        .nav-item {
+            margin: 0 30px;
+            font-size: 16px;
+            color: #333;
+            text-decoration: none;
+            position: relative;
+            padding: 10px 0;
+        }
+        
+        .nav-item:hover {
+            color: #0066cc;
+        }
+        
+        .nav-item:hover::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background-color: #0066cc;
+        }
+        
+        .nav-item.active {
+            font-weight: bold;
+            color: #0066cc;
+        }
+        
+        .nav-item.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background-color: #0066cc;
+        }
+        
+        .search {
+            width: 200px;
+            position: relative;
+        }
+        
+        .search-input {
+            width: 100%;
+            height: 36px;
+            border: 1px solid #ddd;
+            border-radius: 18px;
+            padding: 0 40px 0 20px;
+            font-size: 14px;
+        }
+        
+        .search-btn {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #999;
+        }
+        
+        /* 主内容区 */
+        .main-content {
+            margin-top: 80px;
+            width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+            display: flex;
+            min-height: calc(100vh - 80px - 120px);
+        }
+        
+        /* 左侧导航 */
+        .left-nav {
+            width: 200px;
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 20px 0;
+            position: sticky;
+            top: 100px;
+            height: fit-content;
+        }
+        
+        .left-nav-item {
+            padding: 15px 20px;
+            font-size: 16px;
+            color: #333;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .left-nav-item:hover {
+            background-color: #f0f0f0;
+        }
+        
+        .left-nav-item.active {
+            background-color: #4CAF50;
+            color: #fff;
+            font-weight: bold;
+        }
+        
+        /* 右侧内容区 */
+        .right-content {
+            flex: 1;
+            margin-left: 30px;
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 30px;
+        }
+        
+        /* 内容板块 */
+        .content-section {
+            display: none;
+        }
+        
+        .content-section.active {
+            display: block;
+        }
+        
+        /* 分区标题 */
+        .section-title {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #333;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #4CAF50;
+        }
+        
+        /* 风景分区 */
+        .scenery-area {
+            margin-bottom: 40px;
+        }
+        
+        .area-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .area-icon {
+            width: 40px;
+            height: 40px;
+            margin-right: 15px;
+        }
+        
+        .area-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .area-desc {
+            font-size: 14px;
+            color: #666;
+            margin-top: 5px;
+            margin-left: 55px;
+        }
+        
+        /* 景点卡片 */
+        .scenery-items {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .scenery-item {
+            width: calc(33.333% - 14px);
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+        
+        .scenery-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .scenery-item img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+        
+        .scenery-item-info {
+            padding: 15px;
+        }
+        
+        .scenery-item-info h4 {
+            font-size: 16px;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        
+        .scenery-item-info p {
+            font-size: 14px;
+            line-height: 1.5;
+            color: #666;
+            margin-bottom: 10px;
+        }
+        
+        .scenery-item-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-top: 10px;
+        }
+        
+        .tag {
+            background-color: #e0f2f1;
+            color: #00695c;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+        }
+        
+        /* 底部信息 */
+        .footer {
+            background-color: #333;
+            color: #fff;
+            padding: 30px 0;
+            margin-top: 60px;
+        }
+        
+        .footer-container {
+            width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .footer-section {
+            flex: 1;
+        }
+        
+        .footer-section h4 {
+            font-size: 16px;
+            margin-bottom: 20px;
+            color: #fff;
+        }
+        
+        .footer-section p {
+            font-size: 14px;
+            line-height: 1.6;
+            color: #ccc;
+        }
+        
+        .footer-section a {
+            color: #ccc;
+            text-decoration: none;
+            display: block;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+        
+        .footer-section a:hover {
+            color: #fff;
+        }
+        
+        .footer-bottom {
+            text-align: center;
+            padding-top: 20px;
+            margin-top: 20px;
+            border-top: 1px solid #444;
+            font-size: 14px;
+            color: #999;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 1200px) {
+            .header-container,
+            .main-content,
+            .footer-container {
+                width: 95%;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .header {
+                height: 60px;
+            }
+            
+            .logo {
+                width: 60px;
+                height: 60px;
+            }
+            
+            .nav-item {
+                margin: 0 15px;
+                font-size: 14px;
+            }
+            
+            .search {
+                width: 150px;
+            }
+            
+            .main-content {
+                flex-direction: column;
+            }
+            
+            .left-nav {
+                width: 100%;
+                margin-bottom: 20px;
+                position: static;
+            }
+            
+            .right-content {
+                margin-left: 0;
+            }
+            
+            .scenery-item {
+                width: 100%;
+            }
+            
+            .footer-container {
+                flex-direction: column;
+                gap: 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 全局头部 -->
+    <header class="header">
+        <div class="header-container">
+            <div class="logo" onclick="window.location.href='index.html'"></div>
+            <nav class="nav">
+                <a href="index.html" class="nav-item">首页</a>
+                <a href="history.html" class="nav-item">历史溯源</a>
+                <a href="scenery.html" class="nav-item active">风景打卡</a>
+                <a href="strategy.html" class="nav-item">游玩攻略</a>
+                <a href="interaction.html" class="nav-item">互动体验</a>
+                <a href="about.html" class="nav-item">关于我们</a>
+            </nav>
+            <div class="search">
+                <input type="text" class="search-input" placeholder="搜索历史景点、风景区域">
+                <button class="search-btn">🔍</button>
+            </div>
+        </div>
+    </header>
+    
+    <!-- 主内容区 -->
+    <div class="main-content">
+        <!-- 左侧导航 -->
+        <div class="left-nav">
+            <div class="left-nav-item active" data-target="natural">自然风景分区</div>
+            <div class="left-nav-item" data-target="urban">城市现代风景</div>
+            <div class="left-nav-item" data-target="niche">小众风景秘境</div>
+        </div>
+        
+        <!-- 右侧内容区 -->
+        <div class="right-content">
+            <!-- 自然风景分区 -->
+            <div class="content-section active" id="natural">
+                <h2 class="section-title">自然风景分区</h2>
+                
+                <!-- 嵩山山脉 -->
+                <div class="scenery-area">
+                    <div class="area-header">
+                        <img src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=mountain%20icon%20simple%20design&image_size=square" alt="嵩山山脉" class="area-icon">
+                        <div class="area-title">嵩山山脉</div>
+                    </div>
+                    <p class="area-desc">嵩山是五岳之一，也是少林武术的发源地，拥有壮丽的自然风光和丰富的文化遗产。</p>
+                    <div class="scenery-items">
+                        <div class="scenery-item">
+                            <img src="https://picsum.photos/300/200?random=32" alt="嵩山主峰">
+                            <div class="scenery-item-info">
+                                <h4>嵩山主峰</h4>
+                                <p>嵩山主峰峻极峰海拔1492米，是嵩山的最高点，登上山顶可以俯瞰整个嵩山山脉的壮丽景色。</p>
+                                <div class="scenery-item-tags">
+                                    <span class="tag">登山</span>
+                                    <span class="tag">观景</span>
+                                    <span class="tag">日出</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="scenery-item">
+                            <img src="https://picsum.photos/300/200?random=33" alt="少林寺">
+                            <div class="scenery-item-info">
+                                <h4>少林寺</h4>
+                                <p>少林寺是中国佛教禅宗祖庭，也是少林武术的发源地，被誉为"天下第一名刹"。</p>
+                                <div class="scenery-item-tags">
+                                    <span class="tag">文化</span>
+                                    <span class="tag">武术</span>
+                                    <span class="tag">佛教</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="scenery-item">
+                            <img src="https://picsum.photos/300/200?random=34" alt="中岳庙">
+                            <div class="scenery-item-info">
+                                <h4>中岳庙</h4>
+                                <p>中岳庙是道教圣地，是五岳中规模最大、保存最完整的古建筑群之一。</p>
+                                <div class="scenery-item-tags">
+                                    <span class="tag">道教</span>
+                                    <span class="tag">古建筑</span>
+                                    <span class="tag">文化</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 黄河流域 -->
+                <div class="scenery-area">
+                    <div class="area-header">
+                        <img src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=river%20icon%20simple%20design&image_size=square" alt="黄河流域" class="area-icon">
+                        <div class="area-title">黄河流域</div>
+                    </div>
+                    <p class="area-desc">黄河是中华民族的母亲河，在郑州地区形成了壮丽的自然景观和丰富的文化遗产。</p>
+                    <div class="scenery-items">
+                        <div class="scenery-item">
+                            <img src="https://picsum.photos/300/200?random=35" alt="黄河风光">
+                            <div class="scenery-item-info">
+                                <h4>黄河风光</h4>
+                                <p>黄河在郑州地区流经，形成了壮丽的自然风光，是观赏黄河的绝佳地点。</p>
+                                <div class="scenery-item-tags">
+                                    <span class="tag">自然</span>
+                                    <span class="tag">摄影</span>
+                                    <span class="tag">观景</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="scenery-item">
+                            <img src="https://picsum.photos/300/200?random=36" alt="黄河湿地公园">
+                            <div class="scenery-item-info">
+                                <h4>黄河湿地公园</h4>
+                                <p>郑州黄河湿地公园是一个集生态保护、旅游观光、科普教育于一体的综合性公园。</p>
+                                <div class="scenery-item-tags">
+                                    <span class="tag">生态</span>
+                                    <span class="tag">休闲</span>
+                                    <span class="tag">科普</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="scenery-item">
+                            <img src="https://picsum.photos/300/200?random=37" alt="黄河日落">
+                            <div class="scenery-item-info">
+                                <h4>黄河日落</h4>
+                                <p>黄河日落是郑州地区的著名景观之一，夕阳西下时，黄河水面波光粼粼，景色十分壮观。</p>
+                                <div class="scenery-item-tags">
+                                    <span class="tag">摄影</span>
+                                    <span class="tag">观景</span>
+                                    <span class="tag">日落</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 城市绿肺 -->
+                <div class="scenery-area">
+                    <div class="area-header">
+                        <img src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=park%20icon%20simple%20design&image_size=square" alt="城市绿肺" class="area-icon">
+                        <div class="area-title">城市绿肺</div>
+                    </div>
+                    <p class="area-desc">郑州的城市公园和绿地，为市民提供了休闲娱乐的好去处，也是城市的天然氧吧。</p>
+                    <div class="scenery-items">
+                        <div class="scenery-item">
+                            <img src="https://picsum.photos/300/200?random=38" alt="绿城广场">
+                            <div class="scenery-item-info">
+                                <h4>绿城广场</h4>
+                                <p>绿城广场是郑州市的中心广场，是市民休闲、娱乐、健身的重要场所。</p>
+                                <div class="scenery-item-tags">
+                                    <span class="tag">休闲</span>
+                                    <span class="tag">健身</span>
+                                    <span class="tag">文化</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="scenery-item">
+                            <img src="https://picsum.photos/300/200?random=39" alt="郑州植物园">
+                            <div class="scenery-item-info">
+                                <h4>郑州植物园</h4>
+                                <p>郑州植物园是一个集科研、科普、观光、休闲为一体的综合性植物园。</p>
+                                <div class="scenery-item-tags">
+                                    <span class="tag">植物</span>
+                                    <span class="tag">科普</span>
+                                    <span class="tag">休闲</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="scenery-item">
+                            <img src="https://picsum.photos/300/200?random=40" alt="如意湖公园">
+                            <div class="scenery-item-info">
+                                <h4>如意湖公园</h4>
+                                <p>如意湖公园是郑州新区的标志性景观，湖水清澈，环境优美，是市民休闲的好去处。</p>
+                                <div class="scenery-item-tags">
+                                    <span class="tag">休闲</span>
+                                    <span class="tag">摄影</span>
+                                    <span class="tag">观景</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 城市现代风景 -->
+            <div class="content-section" id="urban">
+                <h2 class="section-title">城市现代风景</h2>
+                
+                <!-- CBD现代景观 -->
+                <div class="scenery-area">
+                    <div class="area-header">
+                        <img src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=city%20skyline%20icon%20simple%20design&image_size=square" alt="CBD现代景观" class="area-icon">
+                        <div class="area-title">CBD现代景观</div>
+                    </div>
+                    <p class="area-desc">郑州CBD是郑州的商业中心，拥有现代化的建筑和景观，展现了郑州的现代都市风貌。</p>
+                    <div class="scenery-items">
+                        <div class="scenery-item">
+                            <img src="https://picsum.photos/300/200?random=41" alt="郑州CBD">
+                            <div class="scenery-item-info">
+                                <h4>郑州CBD</h4>
+                                <p>郑州CBD是郑州的商业中心，拥有现代化的建筑和景观，展现了郑州的现代都市风貌。</p>
+                                <div class="scenery-item-tags">
+                                    <span class="tag">现代</span>
+                                    <span class="tag">商业</span>
+                                    <span class="tag">摄影</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="scenery-item">
+                            <img src="https://picsum.photos/300/200?random=42" alt="千玺广场">
+                            <div class="scenery-item-info">
+                                <h4>千玺广场</h4>
+                                <p>千玺广场是郑州的标志性建筑之一，造型独特，夜晚灯光璀璨，是郑州的新地标。</p>
+                                <div class="scenery-item-tags">
+                                    <span class="tag">地标</span>
+                                    <span class="tag">现代</span>
+                                    <span class="tag">摄影</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="scenery-item">
+                            <img src="https://picsum.photos/300/200?random=43" alt="郑州夜景">
+                            <div class="scenery-item-info">
+                                <h4>郑州夜景</h4>
+                                <p>郑州的夜景十分美丽，特别是CBD地区，灯光璀璨，展现了现代都市的魅力。</p>
+                                <div class="scenery-item-tags">
+                                    <span class="tag">夜景</span>
+                                    <span class="tag">摄影</span>
+                                    <span class="tag">现代</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 城市公园 -->
+                <div class="scenery-area">
+                    <div class="area-header">
+                        <img src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=park%20icon%20simple%20design&image_size=square" alt="城市公园" class="area-icon">
+                        <div class="area-title">城市公园</div>
+                    </div>
+                    <p class="area-desc">郑州的城市公园为市民提供了休闲娱乐的好去处，也是城市的天然氧吧。</p>
+                    <div class="scenery-items">
+                        <div class="scenery-item">
+                            <img src="https://picsum.photos/300/200?random=44" alt="人民公园">
+                            <div class="scenery-item-info">
+                                <h4>人民公园</h4>
+                                <p>人民公园是郑州市区历史悠久的公园之一，环境优美，是市民休闲的好去处。</p>
+                                <div class="scenery-item-tags">
+                                    <span class="tag">休闲</span>
+                                    <span class="tag">历史</span>
+                                    <span class="tag">文化</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="scenery-item">
+                            <img src="https://picsum.photos/300/200?random=45" alt="碧沙岗公园">
+                            <div class="scenery-item-info">
+                                <h4>碧沙岗公园</h4>
+                                <p>碧沙岗公园是郑州市区的重要公园之一，以纪念北伐战争阵亡将士为主题，环境优美。</p>
+                                <div class="scenery-item-tags">
+                                    <span class="tag">历史</span>
+                                    <span class="tag">休闲</span>
+                                    <span class="tag">文化</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="scenery-item">
+                            <img src="https://picsum.photos/300/200?random=46" alt="龙湖公园">
+                            <div class="scenery-item-info">
+                                <h4>龙湖公园</h4>
+                                <p>龙湖公园是郑州新区的重要公园之一，湖水清澈，环境优美，是市民休闲的好去处。</p>
+                                <div class="scenery-item-tags">
+                                    <span class="tag">现代</span>
+                                    <span class="tag">休闲</span>
+                                    <span class="tag">摄影</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 小众风景秘境 -->
+            <div class="content-section" id="niche">
+                <h2 class="section-title">小众风景秘境</h2>
+                <p style="margin-bottom: 30px; color: #666;">郑州周边的小众景点，人少景美，适合追求独特体验的游客。</p>
+                <div class="scenery-items">
+                    <div class="scenery-item">
+                        <img src="https://picsum.photos/300/200?random=47" alt="古村落">
+                        <div class="scenery-item-info">
+                            <h4>古村落</h4>
+                            <p>郑州周边的古村落保存完好，展现了传统的建筑风格和生活方式，是体验乡村文化的好去处。</p>
+                            <div class="scenery-item-tags">
+                                <span class="tag">乡村</span>
+                                <span class="tag">文化</span>
+                                <span class="tag">摄影</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="scenery-item">
+                        <img src="https://picsum.photos/300/200?random=48" alt="山间瀑布">
+                        <div class="scenery-item-info">
+                            <h4>山间瀑布</h4>
+                            <p>郑州周边的山间瀑布景色优美，人少清净，是夏季避暑的好去处。</p>
+                            <div class="scenery-item-tags">
+                                <span class="tag">自然</span>
+                                <span class="tag">避暑</span>
+                                <span class="tag">摄影</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="scenery-item">
+                        <img src="https://picsum.photos/300/200?random=49" alt="茶园">
+                        <div class="scenery-item-info">
+                            <h4>茶园</h4>
+                            <p>郑州周边的茶园环境优美，空气清新，可以体验采茶、制茶的乐趣。</p>
+                            <div class="scenery-item-tags">
+                                <span class="tag">休闲</span>
+                                <span class="tag">体验</span>
+                                <span class="tag">摄影</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="scenery-item">
+                        <img src="https://picsum.photos/300/200?random=50" alt="深山古寺">
+                        <div class="scenery-item-info">
+                            <h4>深山古寺</h4>
+                            <p>郑州周边的深山古寺环境清幽，历史悠久，是修身养性的好去处。</p>
+                            <div class="scenery-item-tags">
+                                <span class="tag">文化</span>
+                                <span class="tag">宗教</span>
+                                <span class="tag">摄影</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="scenery-item">
+                        <img src="https://picsum.photos/300/200?random=51" alt="采摘园">
+                        <div class="scenery-item-info">
+                            <h4>采摘园</h4>
+                            <p>郑州周边的采摘园可以体验采摘水果、蔬菜的乐趣，适合亲子活动。</p>
+                            <div class="scenery-item-tags">
+                                <span class="tag">体验</span>
+                                <span class="tag">亲子</span>
+                                <span class="tag">休闲</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="scenery-item">
+                        <img src="https://picsum.photos/300/200?random=52" alt="骑行路线">
+                        <div class="scenery-item-info">
+                            <h4>骑行路线</h4>
+                            <p>郑州周边的骑行路线风景优美，适合骑行爱好者，感受乡村风光。</p>
+                            <div class="scenery-item-tags">
+                                <span class="tag">运动</span>
+                                <span class="tag">自然</span>
+                                <span class="tag">休闲</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 底部信息 -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-section">
+                <h4>联系我们</h4>
+                <p>客服电话：400-123-4567</p>
+                <p>邮箱：info@zhengzhou-tour.com</p>
+                <p>地址：河南省郑州市中原区</p>
+            </div>
+            <div class="footer-section">
+                <h4>快速链接</h4>
+                <a href="index.html">首页</a>
+                <a href="history.html">历史溯源</a>
+                <a href="scenery.html">风景打卡</a>
+                <a href="strategy.html">游玩攻略</a>
+                <a href="interaction.html">互动体验</a>
+                <a href="about.html">关于我们</a>
+            </div>
+            <div class="footer-section">
+                <h4>社交媒体</h4>
+                <a href="#">微信公众号</a>
+                <a href="#">微博</a>
+                <a href="#">抖音</a>
+                <a href="#">小红书</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2026 郑州历史风景官网 版权所有 | 豫ICP备12345678号</p>
+        </div>
+    </footer>
+    
+    <script src="lib/layui-v2.13.5/layui.js"></script>
+    <script src="lib/axios.min.js"></script>
+    <script>
+        layui.use(['form'], function() {
+            // 左侧导航切换
+            document.querySelectorAll('.left-nav-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    // 移除所有左侧导航项的active类
+                    document.querySelectorAll('.left-nav-item').forEach(navItem => {
+                        navItem.classList.remove('active');
+                    });
+                    // 添加当前项的active类
+                    this.classList.add('active');
+                    
+                    // 隐藏所有内容板块
+                    document.querySelectorAll('.content-section').forEach(section => {
+                        section.classList.remove('active');
+                    });
+                    // 显示目标内容板块
+                    const target = this.getAttribute('data-target');
+                    document.getElementById(target).classList.add('active');
+                });
+            });
+            
+            // 搜索功能
+            document.querySelector('.search-btn').addEventListener('click', function() {
+                var keyword = document.querySelector('.search-input').value.trim();
+                if (keyword) {
+                    // 这里可以添加搜索逻辑
+                    alert('搜索关键词：' + keyword);
+                }
+            });
+            
+            // 回车搜索
+            document.querySelector('.search-input').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    document.querySelector('.search-btn').click();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
