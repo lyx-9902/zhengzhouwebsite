@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智慧水管理平台</title>
+    <link rel="stylesheet" href="lib/layui/css/layui.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Microsoft YaHei', sans-serif;
+            background: #0a1929;
+            color: #fff;
+            overflow: hidden;
+        }
+        
+        .header {
+            height: 60px;
+            background: linear-gradient(135deg, #0f2027, #1c3f51, #2c5364);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            border-bottom: 1px solid #1e3a5f;
+        }
+        
+        .header-left {
+            display: flex;
+            align-items: center;
+        }
+        
+        .header-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #00d4ff;
+            margin-right: 40px;
+        }
+        
+        .header-nav {
+            display: flex;
+            gap: 30px;
+        }
+        
+        .header-nav a {
+            color: #b0c4de;
+            text-decoration: none;
+            font-size: 14px;
+            padding: 5px 10px;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+        
+        .header-nav a:hover {
+            color: #00d4ff;
+            background: rgba(0, 212, 255, 0.1);
+        }
+        
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            font-size: 14px;
+            color: #b0c4de;
+        }
+        
+        .main-container {
+            display: flex;
+            height: calc(100vh - 60px);
+        }
+        
+        .left-panel {
+            width: 300px;
+            background: rgba(15, 32, 39, 0.8);
+            border-right: 1px solid #1e3a5f;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        
+        .center-panel {
+            flex: 1;
+            background: url('https://picsum.photos/id/1015/1200/800') center/cover no-repeat;
+            position: relative;
+        }
+        
+        .right-panel {
+            width: 400px;
+            background: rgba(15, 32, 39, 0.8);
+            border-left: 1px solid #1e3a5f;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        
+        .panel-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #00d4ff;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #1e3a5f;
+        }
+        
+        .alarm-center {
+            margin-bottom: 30px;
+        }
+        
+        .alarm-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        
+        .alarm-stat {
+            text-align: center;
+            padding: 15px;
+            background: rgba(30, 58, 95, 0.6);
+            border-radius: 8px;
+            border: 1px solid #1e3a5f;
+        }
+        
+        .alarm-stat .number {
+            font-size: 24px;
+            font-weight: bold;
+            color: #00d4ff;
+        }
+        
+        .alarm-stat .label {
+            font-size: 12px;
+            color: #b0c4de;
+            margin-top: 5px;
+        }
+        
+        .alarm-list {
+            background: rgba(30, 58, 95, 0.4);
+            border-radius: 8px;
+            border: 1px solid #1e3a5f;
+            overflow: hidden;
+        }
+        
+        .alarm-item {
+            padding: 12px;
+            border-bottom: 1px solid #1e3a5f;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .alarm-item:last-child {
+            border-bottom: none;
+        }
+        
+        .alarm-item .alarm-info {
+            flex: 1;
+        }
+        
+        .alarm-item .alarm-name {
+            font-size: 14px;
+            color: #fff;
+            margin-bottom: 5px;
+        }
+        
+        .alarm-item .alarm-value {
+            font-size: 12px;
+            color: #b0c4de;
+        }
+        
+        .alarm-item .alarm-status {
+            font-size: 12px;
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
+        
+        .alarm-status.normal {
+            background: rgba(0, 255, 127, 0.2);
+            color: #00ff7f;
+        }
+        
+        .alarm-status.warning {
+            background: rgba(255, 215, 0, 0.2);
+            color: #ffd700;
+        }
+        
+        .alarm-status.error {
+            background: rgba(255, 99, 71, 0.2);
+            color: #ff6347;
+        }
+        
+        .water-monitoring {
+            margin-bottom: 30px;
+        }
+        
+        .monitoring-tabs {
+            display: flex;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #1e3a5f;
+        }
+        
+        .monitoring-tab {
+            padding: 8px 16px;
+            font-size: 14px;
+            color: #b0c4de;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+        
+        .monitoring-tab.active {
+            color: #00d4ff;
+            border-bottom-color: #00d4ff;
+        }
+        
+        .monitoring-content {
+            background: rgba(30, 58, 95, 0.4);
+            border-radius: 8px;
+            border: 1px solid #1e3a5f;
+            padding: 15px;
+        }
+        
+        .monitoring-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #1e3a5f;
+        }
+        
+        .monitoring-item:last-child {
+            border-bottom: none;
+        }
+        
+        .monitoring-item .item-name {
+            font-size: 14px;
+            color: #fff;
+        }
+        
+        .monitoring-item .item-value {
+            font-size: 14px;
+            color: #00d4ff;
+            font-weight: bold;
+        }
+        
+        .building-model {
+            position: relative;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .building-image {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+        
+        .building-info {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+            background: rgba(15, 32, 39, 0.8);
+            border: 1px solid #1e3a5f;
+            border-radius: 8px;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .info-item {
+            text-align: center;
+        }
+        
+        .info-item .info-value {
+            font-size: 20px;
+            font-weight: bold;
+            color: #00d4ff;
+        }
+        
+        .info-item .info-label {
+            font-size: 12px;
+            color: #b0c4de;
+            margin-top: 5px;
+        }
+        
+        .water-trend {
+            margin-bottom: 30px;
+        }
+        
+        .chart-container {
+            background: rgba(30, 58, 95, 0.4);
+            border-radius: 8px;
+            border: 1px solid #1e3a5f;
+            padding: 15px;
+            height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .chart-placeholder {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, rgba(0, 212, 255, 0.1) 0%, rgba(0, 212, 255, 0.3) 50%, rgba(0, 212, 255, 0.1) 100%);
+            border-radius: 4px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .chart-placeholder::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 60%;
+            background: linear-gradient(180deg, transparent, rgba(0, 212, 255, 0.2));
+            border-top: 2px solid #00d4ff;
+        }
+        
+        .water-stats {
+            margin-bottom: 30px;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+        
+        .stat-card {
+            background: rgba(30, 58, 95, 0.4);
+            border-radius: 8px;
+            border: 1px solid #1e3a5f;
+            padding: 15px;
+            text-align: center;
+        }
+        
+        .stat-card .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #00d4ff;
+            margin-bottom: 5px;
+        }
+        
+        .stat-card .stat-label {
+            font-size: 12px;
+            color: #b0c4de;
+        }
+        
+        .water-saving {
+            margin-bottom: 30px;
+        }
+        
+        .saving-chart {
+            background: rgba(30, 58, 95, 0.4);
+            border-radius: 8px;
+            border: 1px solid #1e3a5f;
+            padding: 15px;
+            height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .building-markers {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+        }
+        
+        .marker {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: #ff6347;
+            border: 2px solid #fff;
+            border-radius: 50%;
+            cursor: pointer;
+            animation: pulse 2s infinite;
+        }
+        
+        .marker::after {
+            content: attr(data-label);
+            position: absolute;
+            bottom: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(15, 32, 39, 0.8);
+            color: #fff;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            white-space: nowrap;
+            display: none;
+        }
+        
+        .marker:hover::after {
+            display: block;
+        }
+        
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(255, 99, 71, 0.7);
+            }
+            70% {
+                box-shadow: 0 0 0 10px rgba(255, 99, 71, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(255, 99, 71, 0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-left">
+            <div class="header-title">智慧水管理平台</div>
+            <div class="header-nav">
+                <a href="#">水厂一览</a>
+                <a href="#">智能运行监控</a>
+                <a href="#">智能调度优化</a>
+                <a href="#">能耗分析</a>
+                <a href="#">风险管理</a>
+            </div>
+        </div>
+        <div class="header-right">
+            <span id="current-time">2023-05-26 星期五 12:30:00</span>
+        </div>
+    </div>
+    
+    <div class="main-container">
+        <div class="left-panel">
+            <div class="alarm-center">
+                <div class="panel-title">实时告警中心</div>
+                <div class="alarm-stats">
+                    <div class="alarm-stat">
+                        <div class="number">50</div>
+                        <div class="label">告警总数</div>
+                    </div>
+                    <div class="alarm-stat">
+                        <div class="number">46</div>
+                        <div class="label">未处理告警</div>
+                    </div>
+                    <div class="alarm-stat">
+                        <div class="number">10</div>
+                        <div class="label">紧急告警</div>
+                    </div>
+                </div>
+                <div class="alarm-list">
+                    <div class="alarm-item">
+                        <div class="alarm-info">
+                            <div class="alarm-name">黄河水源地</div>
+                            <div class="alarm-value">水位: 42.5m</div>
+                        </div>
+                        <div class="alarm-status normal">正常</div>
+                    </div>
+                    <div class="alarm-item">
+                        <div class="alarm-info">
+                            <div class="alarm-name">清水池</div>
+                            <div class="alarm-value">水位: 8.2m</div>
+                        </div>
+                        <div class="alarm-status normal">正常</div>
+                    </div>
+                    <div class="alarm-item">
+                        <div class="alarm-info">
+                            <div class="alarm-name">滤池</div>
+                            <div class="alarm-value">压力: 0.17MPa</div>
+                        </div>
+                        <div class="alarm-status warning">警告</div>
+                    </div>
+                    <div class="alarm-item">
+                        <div class="alarm-info">
+                            <div class="alarm-name">泵房</div>
+                            <div class="alarm-value">流量: 2400m³/h</div>
+                        </div>
+                        <div class="alarm-status normal">正常</div>
+                    </div>
+                    <div class="alarm-item">
+                        <div class="alarm-info">
+                            <div class="alarm-name">加药间</div>
+                            <div class="alarm-value">药量: 3.2mg/L</div>
+                        </div>
+                        <div class="alarm-status error">错误</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="water-monitoring">
+                <div class="panel-title">分区用水监控</div>
+                <div class="monitoring-tabs">
+                    <div class="monitoring-tab active">办公楼</div>
+                    <div class="monitoring-tab">生产区</div>
+                    <div class="monitoring-tab">绿化区</div>
+                </div>
+                <div class="monitoring-content">
+                    <div class="monitoring-item">
+                        <div class="item-name">日用水量</div>
+                        <div class="item-value">1860 m³</div>
+                    </div>
+                    <div class="monitoring-item">
+                        <div class="item-name">人均用水</div>
+                        <div class="item-value">4.8 m³/人/天</div>
+                    </div>
+                    <div class="monitoring-item">
+                        <div class="item-name">占比</div>
+                        <div class="item-value">31.7%</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="center-panel">
+            <div class="building-model">
+                <img src="https://picsum.photos/id/1019/1200/800" alt="3D建筑模型" class="building-image">
+                <div class="building-markers">
+                    <div class="marker" style="top: 30%; left: 40%;" data-label="A1 办公楼"></div>
+                    <div class="marker" style="top: 45%; left: 60%;" data-label="A2 生产车间"></div>
+                    <div class="marker" style="top: 60%; left: 30%;" data-label="B1 泵房"></div>
+                    <div class="marker" style="top: 50%; left: 70%;" data-label="B2 仓库"></div>
+                </div>
+                <div class="building-info">
+                    <div class="info-item">
+                        <div class="info-value">1860</div>
+                        <div class="info-label">今日用水量 (m³)</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-value">9.9</div>
+                        <div class="info-label">实时供水压力 (MPa)</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-value">346</div>
+                        <div class="info-label">平均用水水平 (L/人/天)</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-value">0.8%</div>
+                        <div class="info-label">管道漏损率</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="right-panel">
+            <div class="water-trend">
+                <div class="panel-title">用水总量趋势</div>
+                <div class="chart-container">
+                    <div class="chart-placeholder"></div>
+                </div>
+            </div>
+            
+            <div class="water-stats">
+                <div class="panel-title">分区用水统计</div>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value">680</div>
+                        <div class="stat-label">办公楼</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">420</div>
+                        <div class="stat-label">生产区</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">350</div>
+                        <div class="stat-label">绿化区</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">410</div>
+                        <div class="stat-label">生活区</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="water-saving">
+                <div class="panel-title">节水成效</div>
+                <div class="saving-chart">
+                    <div class="chart-placeholder"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="lib/layui/layui.js"></script>
+    <script src="lib/axios/axios.min.js"></script>
+    <script>
+        // 更新实时时钟
+        function updateTime() {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            const weekdays = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
+            const weekday = weekdays[now.getDay()];
+            
+            document.getElementById('current-time').textContent = `${year}-${month}-${day} ${weekday} ${hours}:${minutes}:${seconds}`;
+        }
+        
+        // 初始化时钟
+        updateTime();
+        setInterval(updateTime, 1000);
+        
+        // 监控标签切换
+        layui.use(['element'], function() {
+            const element = layui.element;
+            
+            // 绑定标签切换事件
+            const tabs = document.querySelectorAll('.monitoring-tab');
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    // 移除所有标签的active类
+                    tabs.forEach(t => t.classList.remove('active'));
+                    // 添加当前标签的active类
+                    this.classList.add('active');
+                });
+            });
+        });
+    </script>
+</body>
+</html>
